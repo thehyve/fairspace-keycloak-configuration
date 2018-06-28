@@ -22,8 +22,8 @@ export REALM="$3"
 ./wait-for-server-to-respond.sh "$SERVER" || exit 1
 
 # Login to keycloak first
-kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --password "$KEYCLOAK_PASSWORD"
+kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --password "$KEYCLOAK_PASSWORD" || exit 1
 
 # Add a realm and a hyperspace client for it
-sed -e "s/\${REALM}/$REALM/" ./hyperspace-config/hyperspace-realm.json | kcadm.sh create realms -f -
+sed -e "s/\${REALM}/$REALM/g" ./hyperspace-config/hyperspace-realm.json | kcadm.sh create realms -f -
 cat ./hyperspace-config/hyperspace-client.json | kcadm.sh create clients -r "$REALM" -f -
