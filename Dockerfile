@@ -4,4 +4,4 @@ COPY scripts/ /opt/jboss/scripts
 
 WORKDIR /opt/jboss/scripts
 
-ENTRYPOINT [ "echo" ]
+ENTRYPOINT [ "/bin/sh" ]

@@ -17,6 +17,10 @@ export SERVER="$1"
 export USER="$2"
 export REALM="$3"
 
+# Wait for the server to be online. This may take a while, as the webserver waits for postgres
+# If the server will not be up after 5 minutes, the script will die and helm will start a new container
+./wait-for-server-to-respond.sh "$SERVER" || exit 1
+
 # Login to keycloak first
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --password "$KEYCLOAK_PASSWORD"
 
