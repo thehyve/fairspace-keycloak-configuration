@@ -23,6 +23,3 @@ kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --p
 # Add a realm and a hyperspace client for it
 sed -e "s/\${REALM}/$REALM/" ./hyperspace-config/hyperspace-realm.json | kcadm.sh create realms -f -
 cat ./hyperspace-config/hyperspace-client.json | kcadm.sh create clients -r "$REALM" -f -
-
-# Always exit succesfully to prevent restarts of the container
-exit 0
