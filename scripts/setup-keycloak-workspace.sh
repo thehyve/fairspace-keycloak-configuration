@@ -13,14 +13,14 @@
 # The testuser password is expected to be set as environment variable TESTUSER_PASSWORD
 #
 echo "Setting up workspace in keycloak"
-export PATH=$PATH:/opt/jboss/keycloak/bin
+PATH=$PATH:/opt/jboss/keycloak/bin
 
 # Set provided parameters
-export SERVER="$1"
-export USER="$2"
-export REALM="$3"
-export WORKSPACE_NAME="$4"
-export TESTUSER_NAME="${5:-test-$WORKSPACE_NAME}"
+SERVER="$1"
+USER="$2"
+REALM="$3"
+WORKSPACE_NAME="$4"
+TESTUSER_NAME="${5:-test-$WORKSPACE_NAME}"
 
 # Login to keycloak first
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --password "$KEYCLOAK_PASSWORD" || exit 1

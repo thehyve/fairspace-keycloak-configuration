@@ -10,12 +10,12 @@
 # The password is expected to be set as environment variable KEYCLOAK_PASSWORD
 #
 echo "Setting up hyperspace in keycloak"
-export PATH=$PATH:/opt/jboss/keycloak/bin
+PATH=$PATH:/opt/jboss/keycloak/bin
 
 # Set provided parameters
-export SERVER="$1"
-export USER="$2"
-export REALM="$3"
+SERVER="$1"
+USER="$2"
+REALM="$3"
 
 # Wait for the server to be online. This may take a while, as the webserver waits for postgres
 # If the server will not be up after 5 minutes, the script will die and helm will start a new container
