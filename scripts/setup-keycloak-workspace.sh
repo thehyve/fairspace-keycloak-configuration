@@ -7,9 +7,10 @@
 #   username:     Username of the administrative user to login
 #   realm:        Name of the realm to perform actions in
 #   workspace:    Name of the workspace to create
-#   username:     Name of the testuser to create. Defaults to 'test-$WORKSPACE_NAME'
 #
 # The keycloak password is expected to be set as environment variable KEYCLOAK_PASSWORD
+# The testuser username is expected to be set as environment variable TESTUSER_USERNAME.
+#    If not set, if defaults to 'test-$WORKSPACE_NAME'
 # The testuser password is expected to be set as environment variable TESTUSER_PASSWORD
 #
 echo "Setting up workspace in keycloak"
@@ -17,13 +18,13 @@ PATH=$PATH:/opt/jboss/keycloak/bin
 
 # Set provided parameters
 SERVER="$1"
-USER="$2"
+KEYCLOAK_USER="$2"
 REALM="$3"
 WORKSPACE_NAME="$4"
-TESTUSER_NAME="${5:-test-$WORKSPACE_NAME}"
+TESTUSER_USERNAME="${TESTUSER_USERNAME:-test-$WORKSPACE_NAME}"
 
 # Login to keycloak first
-kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --password "$KEYCLOAK_PASSWORD" || exit 1
+kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
 
 # Initialize a role and group
 sed -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" ./workspace-config/use-workspace-role.json | \
@@ -37,12 +38,12 @@ echo "[" $(kcadm.sh get-roles -r "$REALM" --rolename "user-$WORKSPACE_NAME") "]"
     kcadm.sh create groups/$GROUP_ID/role-mappings/realm -r "$REALM" -f -
 
 # Create test user
-sed -e "s/\${TESTUSER_NAME}/$TESTUSER_NAME/g" -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" ./workspace-config/test-user.json | \
+sed -e "s/\${TESTUSER_USERNAME}/$TESTUSER_USERNAME/g" -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" ./workspace-config/test-user.json | \
     kcadm.sh create users -r "$REALM" -f -
-kcadm.sh set-password -r "$REALM" --username "$TESTUSER_NAME" --new-password "$TESTUSER_PASSWORD"
+kcadm.sh set-password -r "$REALM" --username "$TESTUSER_USERNAME" --new-password "$TESTUSER_PASSWORD"
 
 # Add the user to the group
-USER_ID=$(kcadm.sh get users -r "$REALM" -q username="$TESTUSER_NAME" --fields id --format csv --noquotes)
+USER_ID=$(kcadm.sh get users -r "$REALM" -q username="$TESTUSER_USERNAME" --fields id --format csv --noquotes)
 kcadm.sh update users/$USER_ID/groups/$GROUP_ID -r "$REALM" -s realm=$REALM -s userId=$USER_ID -s groupId=$GROUP_ID -n
 
 # Setup first client

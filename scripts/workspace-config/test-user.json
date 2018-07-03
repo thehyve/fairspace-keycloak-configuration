@@ -2,7 +2,7 @@
   "enabled":true,
   "attributes":{},
   "emailVerified":"",
-  "username":"${TESTUSER_NAME}",
+  "username":"${TESTUSER_USERNAME}",
   "firstName":"Test",
   "lastName":"${WORKSPACE_NAME}"
 }
