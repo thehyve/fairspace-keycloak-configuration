@@ -7,11 +7,13 @@
 #   username:     Username of the administrative user to login
 #   realm:        Name of the realm to perform actions in
 #   workspace:    Name of the workspace to create
+#   pluto-url:    Url of the pluto instance in the workspace. For example https://pluto.workspace.fairdev.app
 #
 # The keycloak password is expected to be set as environment variable KEYCLOAK_PASSWORD
 # The testuser username is expected to be set as environment variable TESTUSER_USERNAME.
 #    If not set, if defaults to 'test-$WORKSPACE_NAME'
 # The testuser password is expected to be set as environment variable TESTUSER_PASSWORD
+# The client secret is expected to be set as environment variable CLIENT_SECRET
 #
 echo "Setting up workspace in keycloak"
 PATH=$PATH:/opt/jboss/keycloak/bin
@@ -21,6 +23,7 @@ SERVER="$1"
 KEYCLOAK_USER="$2"
 REALM="$3"
 WORKSPACE_NAME="$4"
+PLUTO_URL="$5"
 TESTUSER_USERNAME="${TESTUSER_USERNAME:-test-$WORKSPACE_NAME}"
 
 # Login to keycloak first
@@ -47,7 +50,11 @@ USER_ID=$(kcadm.sh get users -r "$REALM" -q username="$TESTUSER_USERNAME" --fiel
 kcadm.sh update users/$USER_ID/groups/$GROUP_ID -r "$REALM" -s realm=$REALM -s userId=$USER_ID -s groupId=$GROUP_ID -n
 
 # Setup first client
-sed -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" ./workspace-config/pluto-client.json | \
+sed \
+    -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" \
+    -e "s/\${CLIENT_SECRET}/$CLIENT_SECRET/g" \
+    -e "s#\${PLUTO_URL}#$PLUTO_URL#g" \
+    ./workspace-config/pluto-client.json | \
     kcadm.sh create clients -r "$REALM" -f -
 
 # Add authorizations mapper to the client

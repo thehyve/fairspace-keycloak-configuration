@@ -1,1 +1,18 @@
-{ "clientId": "${WORKSPACE_NAME}-pluto", "enabled": true, "protocol": "openid-connect" }
+{
+  "clientId": "${WORKSPACE_NAME}-pluto",
+  "enabled": true,
+  "protocol": "openid-connect",
+  "clientAuthenticatorType":"client-secret",
+  "bearerOnly":false,
+  "consentRequired":false,
+  "standardFlowEnabled":true,
+  "implicitFlowEnabled":false,
+  "directAccessGrantsEnabled":false,
+  "serviceAccountsEnabled":false,
+  "authorizationServicesEnabled":false,
+  "publicClient":false,
+  "redirectUris":[
+    "${PLUTO_URL}/*"
+  ],
+  "secret": "${CLIENT_SECRET}"
+}
