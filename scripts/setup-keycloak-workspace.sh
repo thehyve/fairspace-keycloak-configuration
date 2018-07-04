@@ -24,6 +24,7 @@ KEYCLOAK_USER="$2"
 REALM="$3"
 WORKSPACE_NAME="$4"
 PLUTO_URL="$5"
+AFTER_LOGOUT_URL="$6"
 TESTUSER_USERNAME="${TESTUSER_USERNAME:-test-$WORKSPACE_NAME}"
 
 # Login to keycloak first
@@ -54,6 +55,7 @@ sed \
     -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" \
     -e "s/\${CLIENT_SECRET}/$CLIENT_SECRET/g" \
     -e "s#\${PLUTO_URL}#$PLUTO_URL#g" \
+    -e "s#\${AFTER_LOGOUT_URL}#$AFTER_LOGOUT_URL#g" \
     ./workspace-config/pluto-client.json | \
     kcadm.sh create clients -r "$REALM" -f -
 

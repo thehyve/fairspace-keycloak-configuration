@@ -12,7 +12,8 @@
   "authorizationServicesEnabled":false,
   "publicClient":false,
   "redirectUris":[
-    "${PLUTO_URL}/*"
+    "${PLUTO_URL}/*",
+    "${AFTER_LOGOUT_URL}/*"
   ],
   "secret": "${CLIENT_SECRET}"
 }
