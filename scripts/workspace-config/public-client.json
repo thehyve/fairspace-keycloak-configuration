@@ -1,0 +1,18 @@
+{
+  "clientId": "${WORKSPACE_NAME}-public",
+  "enabled": true,
+  "protocol": "openid-connect",
+  "clientAuthenticatorType":"client-secret",
+  "bearerOnly":false,
+  "consentRequired":false,
+  "standardFlowEnabled":true,
+  "implicitFlowEnabled":false,
+  "directAccessGrantsEnabled":true,
+  "serviceAccountsEnabled":false,
+  "authorizationServicesEnabled":false,
+  "publicClient":true,
+  "redirectUris":[
+    "${PLUTO_URL}/*",
+    "${AFTER_LOGOUT_URL}/*"
+  ]
+}
