@@ -50,13 +50,21 @@ kcadm.sh set-password -r "$REALM" --username "$TESTUSER_USERNAME" --new-password
 USER_ID=$(kcadm.sh get users -r "$REALM" -q username="$TESTUSER_USERNAME" --fields id --format csv --noquotes)
 kcadm.sh update users/$USER_ID/groups/$GROUP_ID -r "$REALM" -s realm=$REALM -s userId=$USER_ID -s groupId=$GROUP_ID -n
 
-# Setup first client
+# Setup private (pluto) client
 sed \
     -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" \
     -e "s/\${CLIENT_SECRET}/$CLIENT_SECRET/g" \
     -e "s#\${PLUTO_URL}#$PLUTO_URL#g" \
     -e "s#\${AFTER_LOGOUT_URL}#$AFTER_LOGOUT_URL#g" \
     ./workspace-config/pluto-client.json | \
+    kcadm.sh create clients -r "$REALM" -f -
+
+# Setup public client
+sed \
+    -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" \
+    -e "s#\${PLUTO_URL}#$PLUTO_URL#g" \
+    -e "s#\${AFTER_LOGOUT_URL}#$AFTER_LOGOUT_URL#g" \
+    ./workspace-config/public-client.json | \
     kcadm.sh create clients -r "$REALM" -f -
 
 # Add authorizations mapper to the client
