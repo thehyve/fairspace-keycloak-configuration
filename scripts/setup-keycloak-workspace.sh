@@ -67,7 +67,12 @@ sed \
     ./workspace-config/public-client.json | \
     kcadm.sh create clients -r "$REALM" -f -
 
-# Add authorizations mapper to the client
+# Add authorizations mapper to the pluto-client
 CLIENT_ID=$(kcadm.sh get clients -r "$REALM" -q clientId="$WORKSPACE_NAME-pluto" --fields id --format csv --noquotes)
+cat ./workspace-config/authorities-client-mapper.json | \
+    kcadm.sh create clients/$CLIENT_ID/protocol-mappers/models -r "$REALM" -f -
+
+# Add authorizations mapper to the public client
+CLIENT_ID=$(kcadm.sh get clients -r "$REALM" -q clientId="$WORKSPACE_NAME-public" --fields id --format csv --noquotes)
 cat ./workspace-config/authorities-client-mapper.json | \
     kcadm.sh create clients/$CLIENT_ID/protocol-mappers/models -r "$REALM" -f -
