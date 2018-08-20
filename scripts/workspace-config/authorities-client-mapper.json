@@ -2,7 +2,7 @@
   "protocol":"openid-connect",
   "config":{
     "id.token.claim":"false",
-    "access.token.claim":"false",
+    "access.token.claim":"true",
     "userinfo.token.claim":"true",
     "usermodel.realmRoleMapping.rolePrefix":"",
     "multivalued":"true",
