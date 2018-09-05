@@ -26,6 +26,8 @@ WORKSPACE_NAME="$4"
 PLUTO_URL="$5"
 AFTER_LOGOUT_URL="$6"
 TESTUSER_USERNAME="${TESTUSER_USERNAME:-test-$WORKSPACE_NAME}"
+TESTUSER_FIRSTNAME="${TESTUSER_FIRSTNAME:-John}"
+TESTUSER_LASTNAME="${TESTUSER_LASTNAME:-Snow}"
 
 # Login to keycloak first
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
@@ -42,7 +44,12 @@ echo "[" $(kcadm.sh get-roles -r "$REALM" --rolename "user-$WORKSPACE_NAME") "]"
     kcadm.sh create groups/$GROUP_ID/role-mappings/realm -r "$REALM" -f -
 
 # Create test user
-sed -e "s/\${TESTUSER_USERNAME}/$TESTUSER_USERNAME/g" -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" ./workspace-config/test-user.json | \
+sed \
+    -e "s/\${TESTUSER_USERNAME}/$TESTUSER_USERNAME/g"
+    -e "s/\${TESTUSER_FIRSTNAME}/$TESTUSER_FIRSTNAME/g"
+    -e "s/\${TESTUSER_LASTNAME}/$TESTUSER_LASTNAME/g"
+    -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g"
+    ./workspace-config/test-user.json | \
     kcadm.sh create users -r "$REALM" -f -
 kcadm.sh set-password -r "$REALM" --username "$TESTUSER_USERNAME" --new-password "$TESTUSER_PASSWORD"
 

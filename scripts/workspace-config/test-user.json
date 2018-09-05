@@ -3,6 +3,6 @@
   "attributes":{},
   "emailVerified":"",
   "username":"${TESTUSER_USERNAME}",
-  "firstName":"Test",
-  "lastName":"${WORKSPACE_NAME}"
+  "firstName":"${TESTUSER_FIRSTNAME}",
+  "lastName":"${TESTUSER_LASTNAME}"
 }
