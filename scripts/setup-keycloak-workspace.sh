@@ -45,10 +45,10 @@ echo "[" $(kcadm.sh get-roles -r "$REALM" --rolename "user-$WORKSPACE_NAME") "]"
 
 # Create test user
 sed \
-    -e "s/\${TESTUSER_USERNAME}/$TESTUSER_USERNAME/g"
-    -e "s/\${TESTUSER_FIRSTNAME}/$TESTUSER_FIRSTNAME/g"
-    -e "s/\${TESTUSER_LASTNAME}/$TESTUSER_LASTNAME/g"
-    -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g"
+    -e "s/\${TESTUSER_USERNAME}/$TESTUSER_USERNAME/g" \
+    -e "s/\${TESTUSER_FIRSTNAME}/$TESTUSER_FIRSTNAME/g" \
+    -e "s/\${TESTUSER_LASTNAME}/$TESTUSER_LASTNAME/g" \
+    -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" \
     ./workspace-config/test-user.json | \
     kcadm.sh create users -r "$REALM" -f -
 kcadm.sh set-password -r "$REALM" --username "$TESTUSER_USERNAME" --new-password "$TESTUSER_PASSWORD"
