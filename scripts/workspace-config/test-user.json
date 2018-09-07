@@ -2,7 +2,7 @@
   "enabled":true,
   "attributes":{},
   "emailVerified":"",
-  "username":"${TESTUSER_USERNAME}",
-  "firstName":"${TESTUSER_FIRSTNAME}",
-  "lastName":"${TESTUSER_LASTNAME}"
+  "username":"${USERNAME}",
+  "firstName":"${FIRSTNAME}",
+  "lastName":"${LASTNAME}"
 }

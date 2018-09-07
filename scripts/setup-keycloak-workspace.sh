@@ -8,6 +8,8 @@
 #   realm:        Name of the realm to perform actions in
 #   workspace:    Name of the workspace to create
 #   pluto-url:    Url of the pluto instance in the workspace. For example https://pluto.workspace.fairdev.app
+#   after-logout-url:    Url the user is redirected to after logging off. For example https://pluto.workspace.fairdev.app
+#   test-users:          Number of test users being created. Defaults to 5.
 #
 # The keycloak password is expected to be set as environment variable KEYCLOAK_PASSWORD
 # The testuser username is expected to be set as environment variable TESTUSER_USERNAME.
@@ -25,9 +27,24 @@ REALM="$3"
 WORKSPACE_NAME="$4"
 PLUTO_URL="$5"
 AFTER_LOGOUT_URL="$6"
+TEST_USERS=${7:-5}
 TESTUSER_USERNAME="${TESTUSER_USERNAME:-test-$WORKSPACE_NAME}"
-TESTUSER_FIRSTNAME="${TESTUSER_FIRSTNAME:-John}"
-TESTUSER_LASTNAME="${TESTUSER_LASTNAME:-Snow}"
+
+# Creates a new user. Parameters:
+#   username
+#   firstname
+#   lastname
+#   password
+create_user () {
+    sed \
+        -e "s/\${USERNAME}/$1/g" \
+        -e "s/\${FIRSTNAME}/$2/g" \
+        -e "s/\${LASTNAME}/$3/g" \
+        ./workspace-config/test-user.json | \
+        kcadm.sh create users -r "$REALM" -f -
+    kcadm.sh set-password -r "$REALM" --username "$1" --new-password "$4"
+}
+
 
 # Login to keycloak first
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
@@ -43,15 +60,21 @@ GROUP_ID=$(kcadm.sh get groups -r "$REALM" -q search="$WORKSPACE_NAME-users" --f
 echo "[" $(kcadm.sh get-roles -r "$REALM" --rolename "user-$WORKSPACE_NAME") "]" | \
     kcadm.sh create groups/$GROUP_ID/role-mappings/realm -r "$REALM" -f -
 
-# Create test user
-sed \
-    -e "s/\${TESTUSER_USERNAME}/$TESTUSER_USERNAME/g" \
-    -e "s/\${TESTUSER_FIRSTNAME}/$TESTUSER_FIRSTNAME/g" \
-    -e "s/\${TESTUSER_LASTNAME}/$TESTUSER_LASTNAME/g" \
-    -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" \
-    ./workspace-config/test-user.json | \
-    kcadm.sh create users -r "$REALM" -f -
-kcadm.sh set-password -r "$REALM" --username "$TESTUSER_USERNAME" --new-password "$TESTUSER_PASSWORD"
+# Create a number of testusers
+FIRSTNAMES=( "John" "Ygritte" "Daenarys"  "Gregor"  "Cersei"    "Tyrion"    "Arya"  "Sansa" "Khal"  "Joffrey"   "Sandor" )
+LASTNAMES=(  "Snow" ""        "Targaryen" "Clegane" "Lannister" "Lannister" "Stark" "Stark" "Drogo" "Baratheon" "Clegane" )
+if [ "$TEST_USERS" -gt "0" ] && [ "$TEST_USERS" -lt "10" ]; then
+    for i in $(seq 1 $TEST_USERS); do
+        if [ "$i" -eq "1" ]; then
+            USERNAME=$TESTUSER_USERNAME
+        else
+            USERNAME="test${i}-$WORKSPACE_NAME"
+        fi
+        FIRSTNAME=${FIRSTNAMES[$i-1]}
+        LASTNAME=${LASTNAMES[$i-1]}
+        create_user "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
+    done
+fi
 
 # Add the user to the group
 USER_ID=$(kcadm.sh get users -r "$REALM" -q username="$TESTUSER_USERNAME" --fields id --format csv --noquotes)
