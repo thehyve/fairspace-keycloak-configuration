@@ -55,10 +55,13 @@ sed -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" ./workspace-config/use-workspace
 sed -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" ./workspace-config/workspace-users-group.json | \
     kcadm.sh create groups -r "$REALM" -f -
 
-# Add the role to the group
+# Add the roles (logging in to the workspace and viewing users) to the group
 GROUP_ID=$(kcadm.sh get groups -r "$REALM" -q search="$WORKSPACE_NAME-users" --fields id --format csv --noquotes)
+REALM_MGT_CLIENT_ID=$(kcadm.sh get clients -r "$REALM" -q clientId="realm-management" --fields id --format csv --noquotes)
 echo "[" $(kcadm.sh get-roles -r "$REALM" --rolename "user-$WORKSPACE_NAME") "]" | \
     kcadm.sh create groups/$GROUP_ID/role-mappings/realm -r "$REALM" -f -
+echo "[" $(kcadm.sh get-roles -r "$REALM" --cclientid "realm-management" --rolename "view-users") "]" | \
+    kcadm.sh create groups/$GROUP_ID/role-mappings/clients/$REALM_MGT_CLIENT_ID -r "$REALM" -f -
 
 # Create a number of testusers
 FIRSTNAMES=( "John" "Ygritte" "Daenarys"  "Gregor"  "Cersei"    "Tyrion"    "Arya"  "Sansa" "Khal"  "Joffrey"   "Sandor" )
