@@ -27,3 +27,7 @@ kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --p
 # Add a realm and a hyperspace client for it
 sed -e "s/\${REALM}/$REALM/g" ./hyperspace-config/hyperspace-realm.json | kcadm.sh create realms -f -
 cat ./hyperspace-config/hyperspace-client.json | kcadm.sh create clients -r "$REALM" -f -
+
+# Send 0 response status as some keycloak scrips may have been executed before
+# In that case, the kcadm.sh script will return a non-zero response
+exit 0

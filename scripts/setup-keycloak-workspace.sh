@@ -45,7 +45,6 @@ create_user () {
     kcadm.sh set-password -r "$REALM" --username "$1" --new-password "$4"
 }
 
-
 # Login to keycloak first
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
 
@@ -109,3 +108,7 @@ cat ./workspace-config/authorities-client-mapper.json | \
 CLIENT_ID=$(kcadm.sh get clients -r "$REALM" -q clientId="$WORKSPACE_NAME-public" --fields id --format csv --noquotes)
 cat ./workspace-config/authorities-client-mapper.json | \
     kcadm.sh create clients/$CLIENT_ID/protocol-mappers/models -r "$REALM" -f -
+
+# Send 0 response status as some keycloak scrips may have been executed before
+# In that case, the kcadm.sh script will return a non-zero response
+exit 0
