@@ -75,12 +75,12 @@ if [ "$TEST_USERS" -gt "0" ] && [ "$TEST_USERS" -lt "10" ]; then
         FIRSTNAME=${FIRSTNAMES[$i-1]}
         LASTNAME=${LASTNAMES[$i-1]}
         create_user "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
+
+        # Add the user to the group
+        USER_ID=$(kcadm.sh get users -r "$REALM" -q username="$USERNAME" --fields id --format csv --noquotes)
+        kcadm.sh update users/$USER_ID/groups/$GROUP_ID -r "$REALM" -s realm=$REALM -s userId=$USER_ID -s groupId=$GROUP_ID -n
     done
 fi
-
-# Add the user to the group
-USER_ID=$(kcadm.sh get users -r "$REALM" -q username="$TESTUSER_USERNAME" --fields id --format csv --noquotes)
-kcadm.sh update users/$USER_ID/groups/$GROUP_ID -r "$REALM" -s realm=$REALM -s userId=$USER_ID -s groupId=$GROUP_ID -n
 
 # Setup private (pluto) client
 sed \
