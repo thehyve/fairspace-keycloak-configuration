@@ -1,1 +1,0 @@
-{ "name": "user-${WORKSPACE_NAME}", "description": "User can login to workspace ${WORKSPACE_NAME}" }
