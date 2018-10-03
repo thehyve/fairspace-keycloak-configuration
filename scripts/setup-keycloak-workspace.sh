@@ -9,7 +9,7 @@
 #   workspace:    Name of the workspace to create
 #   pluto-url:    Url of the pluto instance in the workspace. For example https://pluto.workspace.fairdev.app
 #   after-logout-url:    Url the user is redirected to after logging off. For example https://pluto.workspace.fairdev.app
-#   test-users:          Number of test users being created. Defaults to 5.
+#   test-users:          Whether to add additional test users (e.g. for ci)
 #
 # The keycloak password is expected to be set as environment variable KEYCLOAK_PASSWORD
 # The testuser username is expected to be set as environment variable TESTUSER_USERNAME.
@@ -27,8 +27,11 @@ REALM="$3"
 WORKSPACE_NAME="$4"
 PLUTO_URL="$5"
 AFTER_LOGOUT_URL="$6"
-TEST_USERS=${7:-5}
+TEST_USERS=${7:true}
+
 TESTUSER_USERNAME="${TESTUSER_USERNAME:-test-$WORKSPACE_NAME}"
+TESTUSER_FIRSTNAME="John"
+TESTUSER_LASTNAME="Snow"
 
 # Login to keycloak first
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
@@ -41,22 +44,13 @@ kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_
 ./functions/add-realm-role-to-group.sh "$REALM" "$WORKSPACE_NAME-users" "user-$WORKSPACE_NAME"
 ./functions/add-client-role-to-group.sh "$REALM" "$WORKSPACE_NAME-users" "realm-management" "view-users"
 
-# Create a number of testusers
-FIRSTNAMES=( "John" "Ygritte" "Daenarys"  "Gregor"  "Cersei"    "Tyrion"    "Arya"  "Sansa" "Khal"  "Joffrey"   "Sandor" )
-LASTNAMES=(  "Snow" ""        "Targaryen" "Clegane" "Lannister" "Lannister" "Stark" "Stark" "Drogo" "Baratheon" "Clegane" )
-if [ "$TEST_USERS" -gt "0" ] && [ "$TEST_USERS" -lt "10" ]; then
-    for i in $(seq 1 $TEST_USERS); do
-        if [ "$i" -eq "1" ]; then
-            USERNAME=$TESTUSER_USERNAME
-        else
-            USERNAME="test${i}-$WORKSPACE_NAME"
-        fi
-        FIRSTNAME=${FIRSTNAMES[$i-1]}
-        LASTNAME=${LASTNAMES[$i-1]}
+# Create the testuser specified in parameters
+./functions/create-user.sh "$REALM" "$TESTUSER_USERNAME" "$TESTUSER_FIRSTNAME" "$TESTUSER_LASTNAME" "$TESTUSER_PASSWORD"
+./functions/add-user-to-group.sh "$REALM" "$TESTUSER_USERNAME" "${WORKSPACE_NAME}-users"
 
-        ./functions/create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
-        ./functions/add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-users"
-    done
+# Create a number of additional testusers
+if [ "$TEST_USERS" -eq "true" ]; then
+    ./functions/add-test-users.sh "$REALM" "$WORKSPACE_NAME"
 fi
 
 # Setup public and private clients for the current realm
