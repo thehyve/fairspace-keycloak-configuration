@@ -8,10 +8,12 @@
 #
 # An authenticated session for keycloak is assumed to be present.
 #
-
+DIR=$(dirname "$0")
 REALM=$1
 CLIENT_ID=$2
 
-CLIENT_UUID=$(kcadm.sh get clients -r "$REALM" -q clientId="$CLIENT_ID" --fields id --format csv --noquotes)
-cat ../workspace-config/authorities-client-mapper.json | \
-    kcadm.sh create clients/$CLIENT_ID/protocol-mappers/models -r "$REALM" -f -
+CLIENT_UUID=$(${DIR}/get-client-uuid.sh "$REALM" "$CLIENT_ID")
+if [ $? -ne 0 ]; then exit 1; fi
+
+cat ${DIR}/../workspace-config/authorities-client-mapper.json | \
+    kcadm.sh create clients/$CLIENT_UUID/protocol-mappers/models -r "$REALM" -f -

@@ -38,8 +38,8 @@ kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_
 ./functions/add-group.sh "$REALM" "${WORKSPACE_NAME}-users"
 
 # Add the roles (logging in to the workspace and viewing users) to the group
-./functions/add-realm-role-to-group.sh "$REALM" "$WORKSPACE_NAME-users" "user-$WORKSPACE_NAME"
-./functions/add-client-role-to-group.sh "$REALM" "$WORKSPACE_NAME-users" "realm-management" "view-users"
+./functions/add-realm-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-users" "user-${WORKSPACE_NAME}"
+./functions/add-client-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-users" "realm-management" "view-users"
 
 # Create a number of testusers
 FIRSTNAMES=( "John" "Ygritte" "Daenarys"  "Gregor"  "Cersei"    "Tyrion"    "Arya"  "Sansa" "Khal"  "Joffrey"   "Sandor" )
