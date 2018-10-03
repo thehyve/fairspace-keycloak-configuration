@@ -41,8 +41,8 @@ kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_
 ./functions/add-group.sh "$REALM" "${WORKSPACE_NAME}-users"
 
 # Add the roles (logging in to the workspace and viewing users) to the group
-./functions/add-realm-role-to-group.sh "$REALM" "$WORKSPACE_NAME-users" "user-$WORKSPACE_NAME"
-./functions/add-client-role-to-group.sh "$REALM" "$WORKSPACE_NAME-users" "realm-management" "view-users"
+./functions/add-realm-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-users" "user-${WORKSPACE_NAME}"
+./functions/add-client-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-users" "realm-management" "view-users"
 
 # Create the testuser specified in parameters
 ./functions/create-user.sh "$REALM" "$TESTUSER_USERNAME" "$TESTUSER_FIRSTNAME" "$TESTUSER_LASTNAME" "$TESTUSER_PASSWORD"

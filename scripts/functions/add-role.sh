@@ -9,6 +9,7 @@
 #
 # An authenticated session for keycloak is assumed to be present.
 #
+DIR=$(dirname "$0")
 REALM=$1
 ROLE_NAME=$2
 ROLE_DESCRIPTION=$3
@@ -16,5 +17,5 @@ ROLE_DESCRIPTION=$3
 sed \
     -e "s/\${ROLE_NAME}/$ROLE_NAME/g" \
     -e "s/\${ROLE_DESCRIPTION}/$ROLE_DESCRIPTION/g" \
-    ../workspace-config/role.json | \
+    ${DIR}/../workspace-config/role.json | \
     kcadm.sh create roles -r "$REALM" -f -
