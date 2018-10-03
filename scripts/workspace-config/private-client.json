@@ -1,5 +1,5 @@
 {
-  "clientId": "${WORKSPACE_NAME}-pluto",
+  "clientId": "${CLIENT_ID}",
   "enabled": true,
   "protocol": "openid-connect",
   "clientAuthenticatorType":"client-secret",

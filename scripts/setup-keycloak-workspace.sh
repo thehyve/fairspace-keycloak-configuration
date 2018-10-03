@@ -30,37 +30,16 @@ AFTER_LOGOUT_URL="$6"
 TEST_USERS=${7:-5}
 TESTUSER_USERNAME="${TESTUSER_USERNAME:-test-$WORKSPACE_NAME}"
 
-# Creates a new user. Parameters:
-#   username
-#   firstname
-#   lastname
-#   password
-create_user () {
-    sed \
-        -e "s/\${USERNAME}/$1/g" \
-        -e "s/\${FIRSTNAME}/$2/g" \
-        -e "s/\${LASTNAME}/$3/g" \
-        ./workspace-config/test-user.json | \
-        kcadm.sh create users -r "$REALM" -f -
-    kcadm.sh set-password -r "$REALM" --username "$1" --new-password "$4"
-}
-
 # Login to keycloak first
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
 
 # Initialize a role and group
-sed -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" ./workspace-config/use-workspace-role.json | \
-    kcadm.sh create roles -r "$REALM" -f -
-sed -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" ./workspace-config/workspace-users-group.json | \
-    kcadm.sh create groups -r "$REALM" -f -
+./functions/add-role.sh "$REALM" "user-${WORKSPACE_NAME}" "User can login to workspace ${WORKSPACE_NAME}"
+./functions/add-group.sh "$REALM" "${WORKSPACE_NAME}-users"
 
 # Add the roles (logging in to the workspace and viewing users) to the group
-GROUP_ID=$(kcadm.sh get groups -r "$REALM" -q search="$WORKSPACE_NAME-users" --fields id --format csv --noquotes)
-REALM_MGT_CLIENT_ID=$(kcadm.sh get clients -r "$REALM" -q clientId="realm-management" --fields id --format csv --noquotes)
-echo "[" $(kcadm.sh get-roles -r "$REALM" --rolename "user-$WORKSPACE_NAME") "]" | \
-    kcadm.sh create groups/$GROUP_ID/role-mappings/realm -r "$REALM" -f -
-echo "[" $(kcadm.sh get-roles -r "$REALM" --cclientid "realm-management" --rolename "view-users") "]" | \
-    kcadm.sh create groups/$GROUP_ID/role-mappings/clients/$REALM_MGT_CLIENT_ID -r "$REALM" -f -
+./functions/add-realm-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-users" "user-${WORKSPACE_NAME}"
+./functions/add-client-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-users" "realm-management" "view-users"
 
 # Create a number of testusers
 FIRSTNAMES=( "John" "Ygritte" "Daenarys"  "Gregor"  "Cersei"    "Tyrion"    "Arya"  "Sansa" "Khal"  "Joffrey"   "Sandor" )
@@ -74,40 +53,15 @@ if [ "$TEST_USERS" -gt "0" ] && [ "$TEST_USERS" -lt "10" ]; then
         fi
         FIRSTNAME=${FIRSTNAMES[$i-1]}
         LASTNAME=${LASTNAMES[$i-1]}
-        create_user "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
 
-        # Add the user to the group
-        USER_ID=$(kcadm.sh get users -r "$REALM" -q username="$USERNAME" --fields id --format csv --noquotes)
-        kcadm.sh update users/$USER_ID/groups/$GROUP_ID -r "$REALM" -s realm=$REALM -s userId=$USER_ID -s groupId=$GROUP_ID -n
+        ./functions/create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
+        ./functions/add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-users"
     done
 fi
 
-# Setup private (pluto) client
-sed \
-    -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" \
-    -e "s/\${CLIENT_SECRET}/$CLIENT_SECRET/g" \
-    -e "s#\${PLUTO_URL}#$PLUTO_URL#g" \
-    -e "s#\${AFTER_LOGOUT_URL}#$AFTER_LOGOUT_URL#g" \
-    ./workspace-config/pluto-client.json | \
-    kcadm.sh create clients -r "$REALM" -f -
-
-# Setup public client
-sed \
-    -e "s/\${WORKSPACE_NAME}/$WORKSPACE_NAME/g" \
-    -e "s#\${PLUTO_URL}#$PLUTO_URL#g" \
-    -e "s#\${AFTER_LOGOUT_URL}#$AFTER_LOGOUT_URL#g" \
-    ./workspace-config/public-client.json | \
-    kcadm.sh create clients -r "$REALM" -f -
-
-# Add authorizations mapper to the pluto-client
-CLIENT_ID=$(kcadm.sh get clients -r "$REALM" -q clientId="$WORKSPACE_NAME-pluto" --fields id --format csv --noquotes)
-cat ./workspace-config/authorities-client-mapper.json | \
-    kcadm.sh create clients/$CLIENT_ID/protocol-mappers/models -r "$REALM" -f -
-
-# Add authorizations mapper to the public client
-CLIENT_ID=$(kcadm.sh get clients -r "$REALM" -q clientId="$WORKSPACE_NAME-public" --fields id --format csv --noquotes)
-cat ./workspace-config/authorities-client-mapper.json | \
-    kcadm.sh create clients/$CLIENT_ID/protocol-mappers/models -r "$REALM" -f -
+# Setup public and private clients for the current realm
+./functions/add-private-client.sh "$REALM" "${WORKSPACE_NAME}-pluto" "$CLIENT_SECRET" "$PLUTO_URL" "$AFTER_LOGOUT_URL"
+./functions/add-public-client.sh "$REALM" "${WORKSPACE_NAME}-public" "$PLUTO_URL" "$AFTER_LOGOUT_URL"
 
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response
