@@ -27,6 +27,8 @@ for i in "${!USERNAMESPREFIXES[@]}"; do
     ./create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
     ./add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-users"
 
+    echo "User $USERNAME - default user"
+
     ((name++))
 done
 
@@ -38,6 +40,8 @@ for i in "${!COORDINATORPREFIXES[@]}"; do
     ./create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
     ./add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-users"
     ./add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-coordinators"
+
+    echo "User $USERNAME - coordinator"
 
     ((name++))
 done
