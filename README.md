@@ -33,6 +33,7 @@ docker run --rm -it \
   -e "KEYCLOAK_USER=keycloak" \
   -e "KEYCLOAK_PASSWORD=keycloak" \
   -e "TESTUSER_PASSWORD=welkom01" \
+  -e "COORDINATOR_PASSWORD=verySecret01" \
   -e "CLIENT_SECRET=ed8722df-d968-4990-869c-88424a83512c" \
   -e "KEYCLOAK_URL=http://192.168.99.100:30881/auth" \
   -e "REALM=testing" \

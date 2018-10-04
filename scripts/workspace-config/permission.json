@@ -1,0 +1,15 @@
+{
+  "name":"${PERMISSION_NAME}",
+  "type":"scope",
+  "logic":"POSITIVE",
+  "decisionStrategy":"UNANIMOUS",
+  "resources":[
+    "${RESOURCE_ID}"
+  ],
+  "scopes":[
+    "${SCOPE_ID}"
+  ],
+  "policies":[
+    "${POLICY_ID}"
+  ]
+}

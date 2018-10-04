@@ -9,13 +9,14 @@
 #
 # An authenticated session for keycloak is assumed to be present.
 #
+DIR=$(dirname "$0")
 REALM=$1
 WORKSPACE_NAME=$2
 
 USERNAMESPREFIXES=( "user" "user2" "user3" )
-COORDINATORPREFIXES=( "coordinator" "coordinator2" )
-FIRSTNAMES=( "Ygritte" "Daenarys"  "Gregor"  "Cersei"    "Tyrion"    "Arya"  "Sansa" "Khal"  "Joffrey"   "Sandor" )
-LASTNAMES=(  ""        "Targaryen" "Clegane" "Lannister" "Lannister" "Stark" "Stark" "Drogo" "Baratheon" "Clegane" )
+COORDINATORPREFIXES=( "coordinator2" "coordinator3" )
+FIRSTNAMES=( "John" "Ygritte" "Daenarys"  "Gregor"  "Cersei"    "Tyrion"    "Arya"  "Sansa" "Khal"  "Joffrey"   "Sandor" )
+LASTNAMES=(  "Snow" ""        "Targaryen" "Clegane" "Lannister" "Lannister" "Stark" "Stark" "Drogo" "Baratheon" "Clegane" )
 
 name=0
 
@@ -24,8 +25,8 @@ for i in "${!USERNAMESPREFIXES[@]}"; do
     FIRSTNAME=${FIRSTNAMES[$name]}
     LASTNAME=${LASTNAMES[$name]}
 
-    ./create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
-    ./add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-users"
+    $DIR/create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
+    $DIR/add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-users"
 
     echo "User $USERNAME - default user"
 
@@ -37,9 +38,9 @@ for i in "${!COORDINATORPREFIXES[@]}"; do
     FIRSTNAME=${FIRSTNAMES[$name]}
     LASTNAME=${LASTNAMES[$name]}
 
-    ./create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
-    ./add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-users"
-    ./add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-coordinators"
+    $DIR/create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
+    $DIR/add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-users"
+    $DIR/add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-coordinators"
 
     echo "User $USERNAME - coordinator"
 

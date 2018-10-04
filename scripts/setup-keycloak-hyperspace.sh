@@ -28,6 +28,15 @@ kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --p
 sed -e "s/\${REALM}/$REALM/g" ./hyperspace-config/hyperspace-realm.json | kcadm.sh create realms -f -
 cat ./hyperspace-config/hyperspace-client.json | kcadm.sh create clients -r "$REALM" -f -
 
+# Enable user management permissions on this realm
+./functions/enable-user-management-permissions.sh "$REALM"
+./functions/add-role.sh "$REALM" "workspace-coordinator" "User is a workspace coordinator"
+./functions/add-role-policy.sh "$REALM" "workspace-coordinator" "workspace-coordinator"
+
+# Update the existing permission, as adding new permissions does not actually
+# apply the permission
+./functions/update-permission.sh "$REALM" "manage-group-membership.permission.users" "workspace-coordinator"
+
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response
 exit 0
