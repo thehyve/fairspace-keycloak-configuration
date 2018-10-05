@@ -11,8 +11,5 @@
   "serviceAccountsEnabled":false,
   "authorizationServicesEnabled":false,
   "publicClient":true,
-  "redirectUris":[
-    "${PLUTO_URL}/*",
-    "${AFTER_LOGOUT_URL}/*"
-  ]
+  "redirectUris": ${QUOTED_REDIRECT_URLS}
 }

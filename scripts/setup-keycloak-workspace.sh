@@ -7,8 +7,8 @@
 #   username:     Username of the administrative user to login
 #   realm:        Name of the realm to perform actions in
 #   workspace:    Name of the workspace to create
-#   pluto-url:    Url of the pluto instance in the workspace. For example https://pluto.workspace.fairdev.app
-#   after-logout-url:    Url the user is redirected to after logging off. For example https://pluto.workspace.fairdev.app
+#   redirect-url-file:   Name of the file that contains all the redirect urls for the workspace.
+#                        Should at least contain the pluto url, after-logout url and jupyterhub url
 #   test-users:          Whether to add additional test users (e.g. for ci)
 #
 # The keycloak password is expected to be set as environment variable KEYCLOAK_PASSWORD
@@ -28,9 +28,8 @@ SERVER="$1"
 KEYCLOAK_USER="$2"
 REALM="$3"
 WORKSPACE_NAME="$4"
-PLUTO_URL="$5"
-AFTER_LOGOUT_URL="$6"
-ADDITIONAL_TEST_USERS=${7:-true}
+REDIRECT_URL_FILE="$5"
+ADDITIONAL_TEST_USERS=${6:-true}
 
 # Parameters for first user
 TESTUSER_USERNAME="${TESTUSER_USERNAME:-test-$WORKSPACE_NAME}"
@@ -84,8 +83,8 @@ if [ "$ADDITIONAL_TEST_USERS" == "true" ]; then
 fi
 
 # Setup public and private clients for the current realm
-./functions/add-private-client.sh "$REALM" "${WORKSPACE_NAME}-pluto" "$CLIENT_SECRET" "$PLUTO_URL" "$AFTER_LOGOUT_URL"
-./functions/add-public-client.sh "$REALM" "${WORKSPACE_NAME}-public" "$PLUTO_URL" "$AFTER_LOGOUT_URL"
+./functions/add-private-client.sh "$REALM" "${WORKSPACE_NAME}-pluto" "$CLIENT_SECRET" "$REDIRECT_URL_FILE"
+./functions/add-public-client.sh "$REALM" "${WORKSPACE_NAME}-public" "$REDIRECT_URL_FILE"
 
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response

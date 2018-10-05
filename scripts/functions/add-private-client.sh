@@ -14,14 +14,15 @@ DIR=$(dirname "$0")
 REALM=$1
 CLIENT_ID=$2
 CLIENT_SECRET=$3
-PLUTO_URL=$4
-AFTER_LOGOUT_URL=$5
+REDIRECT_URL_FILE=$4
+
+# Generate a list of quotes redirect urls
+QUOTED_REDIRECT_URLS=$($DIR/parse-file-to-json-array.sh $REDIRECT_URL_FILE)
 
 sed \
     -e "s/\${CLIENT_ID}/$CLIENT_ID/g" \
     -e "s/\${CLIENT_SECRET}/$CLIENT_SECRET/g" \
-    -e "s#\${PLUTO_URL}#$PLUTO_URL#g" \
-    -e "s#\${AFTER_LOGOUT_URL}#$AFTER_LOGOUT_URL#g" \
+    -e "s#\${QUOTED_REDIRECT_URLS}#$QUOTED_REDIRECT_URLS#g" \
     ${DIR}/../workspace-config/private-client.json | \
     kcadm.sh create clients -r "$REALM" -f -
 
