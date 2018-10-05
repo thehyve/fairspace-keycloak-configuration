@@ -13,10 +13,7 @@ DIR=$(dirname "$0")
 REALM=$1
 WORKSPACE_NAME=$2
 
-USERNAMESPREFIXES=( "user" "user2" "user3" )
-COORDINATORPREFIXES=( "coordinator2" "coordinator3" )
-FIRSTNAMES=( "John" "Ygritte" "Daenarys"  "Gregor"  "Cersei"    "Tyrion"    "Arya"  "Sansa" "Khal"  "Joffrey"   "Sandor" )
-LASTNAMES=(  "Snow" ""        "Targaryen" "Clegane" "Lannister" "Lannister" "Stark" "Stark" "Drogo" "Baratheon" "Clegane" )
+source $DIR/../config.sh
 
 name=0
 
