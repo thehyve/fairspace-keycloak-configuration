@@ -57,6 +57,7 @@ You can also pass environment variables to work with the scripts easily. For exa
 ```
 docker run --rm -it \
   -v <absolute-path-to-scripts>:/opt/jboss/scripts \
+  -v <absolute-path-to-url-file>:/opt/jboss/redirect-urls \
   -e "KEYCLOAK_USER=keycloak" \
   -e "KEYCLOAK_PASSWORD=keycloak" \
   -e "TESTUSER_PASSWORD=welkom01" \
@@ -65,15 +66,14 @@ docker run --rm -it \
   -e "KEYCLOAK_URL=http://192.168.99.100:30881/auth" \
   -e "REALM=testing" \
   -e "WORKSPACE=test" \
-  -e "PLUTO_URL=http://localhost" \
-  -e "OTHER_URL=http://localhost:8080" \
+  -e "URL_FILE=/opt/jboss/redirect-urls" \
   keycloak-config
 ```
 
 That would allow you to run the `setup-keycloak-workspace.sh` script as follows:
 
 ```
-./setup-keycloak-workspace.sh $KEYCLOAK_URL $KEYCLOAK_USER $REALM $WORKSPACE $PLUTO_URL $OTHER_URL
+./setup-keycloak-workspace.sh $KEYCLOAK_URL $KEYCLOAK_USER $REALM $WORKSPACE $URL_FILE
 ```
 
 Please note that the docker -v command requires the absolute path to the scripts
