@@ -6,7 +6,7 @@
 REDIRECT_URL_FILE=$1
 
 # Read lines
-while read url; do
+while read -r url || [[ -n $url ]]; do
   QUOTED_REDIRECT_URLS="$QUOTED_REDIRECT_URLS \"$url\","
 done < $REDIRECT_URL_FILE
 
