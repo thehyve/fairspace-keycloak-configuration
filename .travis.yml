@@ -1,0 +1,49 @@
+language: ruby
+
+os:
+- linux
+
+env:
+  global:
+  - APPNAME="keycloak-configuration"
+  - ORG="fairspace"
+  - RELEASE_BRANCH="master"
+  - SNAPSHOT_BRANCH="dev"
+  - BUILD_SCRIPTS_REPO="fairspace/build-scripts"
+  - DOCKER_USERNAME="fairspace"
+  # DOCKER_PASSWORD = ...
+  - secure: "NYvg29LIJ+8skSS2F+c7ZGaLyYW4MV90s45F48DfbAZAh3SfR8trTxIez9Zw49d0anB6QhrXyOgE1M+pdMSB962raiQRBy71zPfMnNFlrJKHqrbKPHrnlrlgwsDQ3hMPlM1jiLwhv/ssbYa7EgfWdOK9K+QSu75670dGRlbNDRroyde9Ig/pYubktTebrxvFoCAUhr4UxpvhwkoCejqAdY6veswVbjpNS5F9P4RADetRjQFF+ry1v7JaCBc+7L+RXOiNzWWEswU98Hez7yg8Jq/oJeGoUeTQwSiTCUx3NhJ8sP0QoscXVhU8j2+VftfE+f8/bMvbGGOkomW/srQls3DUL9wmhtIzo2Sjpuf5ZMRany90fWuOGTrWZnoYQmJh2xj7/OB/3bzsgsAE9Y3rnhDMvtA05wduuEzwHoRPnjtXGBhfLr8r6b25uao1Wr0wlrH0TBegkaEwQIqR5tLYnzLeKzwq4BA7QrI+OkP3A7NK8Q7eNd3jNSbUfa4t7ZF4Pv6tH30rII8F/8W+YE8Dwg1Lca/WgXsHs9RmN7cOGuDCqALxE2qvMCDuD9lANZAbeXM2S5yG9j5LJ8DuFM15zZB9IhOVVJkBgUmqKn8s+20IURaa3rhSoVGDqsvtcP+bODVhWwSho8xTw/7M1SiftjtfcoqiWaKKIwqc/Uo6HtU="
+  - GITHUB_USERNAME="fairspace-ci"
+  # GITHUB_PASSWORD = ...
+  - secure: "FpHANX0VBMRC84WtJqjK+GUi6tJogcWCIFW3S+4MJxsxDRomvwT/Amfaauc8sc2Cy99R/Vs5uDpu59JXD/Og8EcEH9bjmkONNf/BvnSdMamcZONuf1E26N54vH9AT7KpSD0MS99hnZctGeQmLVfmAaz/6JmnJp0podeKvXHf8aBZ5plz2ieiEj38usojVwF02E0Y18qwH4oceoLUZFUnJdVXXLN1LM08/V72GFSFBTRPWy68btaquRY1pxXZk4cD1ijicerSV59DZhGKjNyifBX63Q9BjYveR0iTCBKvERD0nINLF7fWZhtPfYjHiskxgtI+MdoBrVKQSab3qsYFfTkzzlXYyXmZyHmVg7lJygfIkCH8gUJnsxv3GrGO0ScwBjDny41E++qDF+n5BPEw8lhJ9KDA5gN7Qzbt1WvkH22WsAo0yAtToMg+qQYYp+tbAz7/JNjZNK4ze6FgbQ9H3l6aPQ+TfTtyIL00lW5+FQ3DW0QlNHJZQqnaehP6NMMRsJ2xcgFPDNTPHD4Um62uevBVOfLxcO5H376IxXSpuKOW8XrnofileOJtElgEMms73TE1SaRSvZnheI85Z+XKLy3JqV1GhWrJXRvJPqC5j0rO4rAkqH79ZmikpB0YruBEiiHyCfS6BDIehrCzVKRH8Mmab0xZPSsay/xEU5q6UbA="
+
+before_install:
+- git clone https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/$BUILD_SCRIPTS_REPO ci
+- source ./ci/setup_env.sh
+
+jobs:
+  include:
+  - stage: Build
+    name: Build and optionally push docker image
+    services:
+    - docker
+    script:
+    - ./ci/docker/build.sh
+    - 'if [[ $SHOULD_RELEASE ]]; then ./ci/docker/release.sh; fi'
+  - if: branch = env(RELEASE_BRANCH) AND type != "pull_request"
+    stage: Versioning
+    name: Set tag and update version
+    script:
+    - "./ci/versioning/add_tag_to_git.sh"
+    - "./ci/versioning/set_next_version.sh"
+
+notifications:
+  hipchat:
+    on_pull_requests: false
+    rooms:
+      secure: "RVKMcqlxsMV5NuGNP6krGhm5Pz2E2lkg1zHphd6/+/3okaYxDM3+Ug4v5jL+b1LGp3b2xlNsCvNT4H0folnx8JLYxrf6FP69Nxts8SNN+Y2WeWDkUDNIvaMSM19FhKE46rtq99bpA+aFT+7MzciAaxxJFVG05XbkVGmSz6e6QJSE/csjgB4ryiWApisJLocqs+Jq50cJVJI4RWLlNyK2729kGsA76s0VFoCUJSx4s3xAYB9YxZCL405uQVgpBuJsvZwhmahG2l4S0MnhTDSwta9BiNlhDdKF4yC5dqK+zm62r3CafVG7cohjwAzltau/4cpCHthyu/gHaB5mlqpfMG34vLO6Pkl0j+LGLuQBc8JdSUxTYbK5vk9bEKoWcUJh1g8xinYy8N/HgFuhfqrebU+8rHVppf79InDXn1qQO6imcnpoVVYGwSo3QaLoswgA58chj6oV3rcLw+iPkXwUf9echv5KIcnLwE32cTblAksZYutPRKlbN6KPM9HBzobLOeQBZP2uimEPCerY4YnKaUa+SG9C6pNtQVLdbolpkN/KmM0dktDU7B1FD/vKXvCF+Uq7eZ/MBSa4zyRuvXKreP/VpIQLZ9s/uEPhFDTVi5L1VcfiwwKHBdyaw0lD5PHW3V0dvU4imcxSe8EH5HhzmzGkOf80HHfGNJUc9ElBP2M="
+    template:
+    - '<a href="%{build_url}">%{repository_slug}#%{build_number}</a> (%{branch} -
+      <a href="%{compare_url}">%{commit}</a> : %{author}): %{message}'
+    format: html
+    notify: true
