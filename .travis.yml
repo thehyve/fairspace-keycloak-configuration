@@ -1,0 +1,63 @@
+language: ruby
+
+os:
+- linux
+
+env:
+  global:
+  - APPNAME="keycloak-configuration"
+  - ORG="fairspace"
+  - RELEASE_BRANCH="master"
+  - SNAPSHOT_BRANCH="VRE-292-Jenkins-to-Travis"
+  - BUILD_SCRIPTS_REPO="fairspace/build-scripts"
+  - DOCKER_USERNAME="fairspace"
+  # DOCKER_PASSWORD = ...
+  - secure: "NYvg29LIJ+8skSS2F+c7ZGaLyYW4MV90s45F48DfbAZAh3SfR8trTxIez9Zw49d0anB6QhrXyOgE1M+pdMSB962raiQRBy71zPfMnNFlrJKHqrbKPHrnlrlgwsDQ3hMPlM1jiLwhv/ssbYa7EgfWdOK9K+QSu75670dGRlbNDRroyde9Ig/pYubktTebrxvFoCAUhr4UxpvhwkoCejqAdY6veswVbjpNS5F9P4RADetRjQFF+ry1v7JaCBc+7L+RXOiNzWWEswU98Hez7yg8Jq/oJeGoUeTQwSiTCUx3NhJ8sP0QoscXVhU8j2+VftfE+f8/bMvbGGOkomW/srQls3DUL9wmhtIzo2Sjpuf5ZMRany90fWuOGTrWZnoYQmJh2xj7/OB/3bzsgsAE9Y3rnhDMvtA05wduuEzwHoRPnjtXGBhfLr8r6b25uao1Wr0wlrH0TBegkaEwQIqR5tLYnzLeKzwq4BA7QrI+OkP3A7NK8Q7eNd3jNSbUfa4t7ZF4Pv6tH30rII8F/8W+YE8Dwg1Lca/WgXsHs9RmN7cOGuDCqALxE2qvMCDuD9lANZAbeXM2S5yG9j5LJ8DuFM15zZB9IhOVVJkBgUmqKn8s+20IURaa3rhSoVGDqsvtcP+bODVhWwSho8xTw/7M1SiftjtfcoqiWaKKIwqc/Uo6HtU="
+  - GITHUB_USERNAME="fairspace-ci"
+  # GITHUB_PASSWORD = ...
+  - secure: "NYvg29LIJ+8skSS2F+c7ZGaLyYW4MV90s45F48DfbAZAh3SfR8trTxIez9Zw49d0anB6QhrXyOgE1M+pdMSB962raiQRBy71zPfMnNFlrJKHqrbKPHrnlrlgwsDQ3hMPlM1jiLwhv/ssbYa7EgfWdOK9K+QSu75670dGRlbNDRroyde9Ig/pYubktTebrxvFoCAUhr4UxpvhwkoCejqAdY6veswVbjpNS5F9P4RADetRjQFF+ry1v7JaCBc+7L+RXOiNzWWEswU98Hez7yg8Jq/oJeGoUeTQwSiTCUx3NhJ8sP0QoscXVhU8j2+VftfE+f8/bMvbGGOkomW/srQls3DUL9wmhtIzo2Sjpuf5ZMRany90fWuOGTrWZnoYQmJh2xj7/OB/3bzsgsAE9Y3rnhDMvtA05wduuEzwHoRPnjtXGBhfLr8r6b25uao1Wr0wlrH0TBegkaEwQIqR5tLYnzLeKzwq4BA7QrI+OkP3A7NK8Q7eNd3jNSbUfa4t7ZF4Pv6tH30rII8F/8W+YE8Dwg1Lca/WgXsHs9RmN7cOGuDCqALxE2qvMCDuD9lANZAbeXM2S5yG9j5LJ8DuFM15zZB9IhOVVJkBgUmqKn8s+20IURaa3rhSoVGDqsvtcP+bODVhWwSho8xTw/7M1SiftjtfcoqiWaKKIwqc/Uo6HtU="
+  # TRAVIS_ACCESS_TOKEN = ...
+  - secure: "Gj6rPHxCd1H+j21Pj2Dc0qeDj3Nw6OaFD7j8Pcewvrhfv4LNQU4e6me3bOXPQ1MuD2pD3NYIR/W990StFcn4T7JbfR7hs8DL4CYrxBaQo6GBit/zDHfNAqyjJN0kk8tyW4PJ5w0xv8lDAHDyoA1feTRXeB/b4yJEpAmTgwsVnCFOPlMHP+tL62QbfwwZsXFc4gMa94voeoeXPz301Z+nPzAFTBkNyj5MGsfHKOES5opOSf0e3ICc10qbMlya9PWzP2j1t6UdZHAPlVS/sJvoTZKpeHrafe/4bEISrPEnDPrto688G83LQbenxCZUIkqCNTsIHTFF1a92t3eJIV0Ifn8bM7Zjm/2JEiES4/tKr6VVgIm4t9y8er1aj2WfF/ve5pui941w4lQROEpMHz83HQq90Sgx2rHkfxN3OJ41QX/887hcjOubX7LbP4NnRLGZ39ZSVqJ2XGNeqO4PPia7ZooaAsqkBBrm/scN4yrJ9vEyfpRh9JqWA26UGkYFjJgUtxl4WDSs4DcJFqK1vBF7M16vSkbPi9oT7RolNb0RZioYyJnxD9Sn0gElTwZbyAZpL6wtgG6Eb429ocuK5BqohhcyiS8rXtTq5IbyCpW9BPdD1H+jvNMRboFZDXqBIupqCauAXxlRkqBS16SAZhF283v9PiHXWpL4sgKK74cNXOk="
+
+before_install:
+- git clone https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/$BUILD_SCRIPTS_REPO ci
+- source ./ci/setup_env.sh
+
+jobs:
+  include:
+  - stage: Build
+    name: Build and optionally push docker image
+    services:
+    - docker
+    script:
+    - ./ci/docker/build.sh
+    - 'if [[ $SHOULD_RELEASE ]]; then ./ci/docker/release.sh; fi'
+  - if: branch = env(RELEASE_BRANCH) AND type != "pull_request"
+    stage: Versioning
+    name: Set tag and update version
+    script:
+    - "./ci/versioning/add_tag_to_git.sh"
+    - "./ci/versioning/set_next_version.sh"
+  - if: branch = env(RELEASE_BRANCH) AND type != "pull_request"
+    stage: Trigger downstream
+    name: Trigger workspace build on master branch
+    install: skip
+    script:
+    - sh ./ci/trigger-travis/trigger-travis.sh --pro --branch master $ORG workspace $TRAVIS_ACCESS_TOKEN
+  - if: branch = env(SNAPSHOT_BRANCH) AND type != "pull_request"
+    stage: Trigger downstream
+    name: Trigger workspace build on dev branch
+    install: skip
+    script:
+    - sh ./ci/trigger-travis/trigger-travis.sh --pro --branch dev $ORG workspace $TRAVIS_ACCESS_TOKEN
+
+notifications:
+  hipchat:
+    on_pull_requests: false
+    rooms:
+      secure: "RVKMcqlxsMV5NuGNP6krGhm5Pz2E2lkg1zHphd6/+/3okaYxDM3+Ug4v5jL+b1LGp3b2xlNsCvNT4H0folnx8JLYxrf6FP69Nxts8SNN+Y2WeWDkUDNIvaMSM19FhKE46rtq99bpA+aFT+7MzciAaxxJFVG05XbkVGmSz6e6QJSE/csjgB4ryiWApisJLocqs+Jq50cJVJI4RWLlNyK2729kGsA76s0VFoCUJSx4s3xAYB9YxZCL405uQVgpBuJsvZwhmahG2l4S0MnhTDSwta9BiNlhDdKF4yC5dqK+zm62r3CafVG7cohjwAzltau/4cpCHthyu/gHaB5mlqpfMG34vLO6Pkl0j+LGLuQBc8JdSUxTYbK5vk9bEKoWcUJh1g8xinYy8N/HgFuhfqrebU+8rHVppf79InDXn1qQO6imcnpoVVYGwSo3QaLoswgA58chj6oV3rcLw+iPkXwUf9echv5KIcnLwE32cTblAksZYutPRKlbN6KPM9HBzobLOeQBZP2uimEPCerY4YnKaUa+SG9C6pNtQVLdbolpkN/KmM0dktDU7B1FD/vKXvCF+Uq7eZ/MBSa4zyRuvXKreP/VpIQLZ9s/uEPhFDTVi5L1VcfiwwKHBdyaw0lD5PHW3V0dvU4imcxSe8EH5HhzmzGkOf80HHfGNJUc9ElBP2M="
+    template:
+    - '<a href="%{build_url}">%{repository_slug}#%{build_number}</a> (%{branch} -
+      <a href="%{compare_url}">%{commit}</a> : %{author}): %{message}'
+    format: html
+    notify: true
