@@ -16,8 +16,6 @@ env:
   - GITHUB_USERNAME="fairspace-ci"
   # GITHUB_PASSWORD = ...
   - secure: "FpHANX0VBMRC84WtJqjK+GUi6tJogcWCIFW3S+4MJxsxDRomvwT/Amfaauc8sc2Cy99R/Vs5uDpu59JXD/Og8EcEH9bjmkONNf/BvnSdMamcZONuf1E26N54vH9AT7KpSD0MS99hnZctGeQmLVfmAaz/6JmnJp0podeKvXHf8aBZ5plz2ieiEj38usojVwF02E0Y18qwH4oceoLUZFUnJdVXXLN1LM08/V72GFSFBTRPWy68btaquRY1pxXZk4cD1ijicerSV59DZhGKjNyifBX63Q9BjYveR0iTCBKvERD0nINLF7fWZhtPfYjHiskxgtI+MdoBrVKQSab3qsYFfTkzzlXYyXmZyHmVg7lJygfIkCH8gUJnsxv3GrGO0ScwBjDny41E++qDF+n5BPEw8lhJ9KDA5gN7Qzbt1WvkH22WsAo0yAtToMg+qQYYp+tbAz7/JNjZNK4ze6FgbQ9H3l6aPQ+TfTtyIL00lW5+FQ3DW0QlNHJZQqnaehP6NMMRsJ2xcgFPDNTPHD4Um62uevBVOfLxcO5H376IxXSpuKOW8XrnofileOJtElgEMms73TE1SaRSvZnheI85Z+XKLy3JqV1GhWrJXRvJPqC5j0rO4rAkqH79ZmikpB0YruBEiiHyCfS6BDIehrCzVKRH8Mmab0xZPSsay/xEU5q6UbA="
-  # TRAVIS_ACCESS_TOKEN = ...
-  - secure: "Gj6rPHxCd1H+j21Pj2Dc0qeDj3Nw6OaFD7j8Pcewvrhfv4LNQU4e6me3bOXPQ1MuD2pD3NYIR/W990StFcn4T7JbfR7hs8DL4CYrxBaQo6GBit/zDHfNAqyjJN0kk8tyW4PJ5w0xv8lDAHDyoA1feTRXeB/b4yJEpAmTgwsVnCFOPlMHP+tL62QbfwwZsXFc4gMa94voeoeXPz301Z+nPzAFTBkNyj5MGsfHKOES5opOSf0e3ICc10qbMlya9PWzP2j1t6UdZHAPlVS/sJvoTZKpeHrafe/4bEISrPEnDPrto688G83LQbenxCZUIkqCNTsIHTFF1a92t3eJIV0Ifn8bM7Zjm/2JEiES4/tKr6VVgIm4t9y8er1aj2WfF/ve5pui941w4lQROEpMHz83HQq90Sgx2rHkfxN3OJ41QX/887hcjOubX7LbP4NnRLGZ39ZSVqJ2XGNeqO4PPia7ZooaAsqkBBrm/scN4yrJ9vEyfpRh9JqWA26UGkYFjJgUtxl4WDSs4DcJFqK1vBF7M16vSkbPi9oT7RolNb0RZioYyJnxD9Sn0gElTwZbyAZpL6wtgG6Eb429ocuK5BqohhcyiS8rXtTq5IbyCpW9BPdD1H+jvNMRboFZDXqBIupqCauAXxlRkqBS16SAZhF283v9PiHXWpL4sgKK74cNXOk="
 
 before_install:
 - git clone https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/$BUILD_SCRIPTS_REPO ci
@@ -38,18 +36,6 @@ jobs:
     script:
     - "./ci/versioning/add_tag_to_git.sh"
     - "./ci/versioning/set_next_version.sh"
-  - if: branch = env(RELEASE_BRANCH) AND type != "pull_request"
-    stage: Trigger downstream
-    name: Trigger workspace build on master branch
-    install: skip
-    script:
-    - sh ./ci/trigger-travis/trigger-travis.sh --pro --branch master $ORG workspace $TRAVIS_ACCESS_TOKEN
-  - if: branch = env(SNAPSHOT_BRANCH) AND type != "pull_request"
-    stage: Trigger downstream
-    name: Trigger workspace build on dev branch
-    install: skip
-    script:
-    - sh ./ci/trigger-travis/trigger-travis.sh --pro --branch dev $ORG workspace $TRAVIS_ACCESS_TOKEN
 
 notifications:
   hipchat:
