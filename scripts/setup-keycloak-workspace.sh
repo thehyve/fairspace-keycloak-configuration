@@ -20,7 +20,7 @@
 #    If not set, if defaults to 'coordinator-$WORKSPACE_NAME'
 # The coordinator password is expected to be set as environment variable COORDINATOR_PASSWORD
 #
-echo "Setting up workspace in keycloak"
+echo "Setting up Workspace in keycloak ..."
 PATH=$PATH:/opt/jboss/keycloak/bin
 
 # Set provided parameters
@@ -42,50 +42,72 @@ COORDINATOR_FIRSTNAME="First"
 COORDINATOR_LASTNAME="Coordinator"
 
 # Login to keycloak first
+echo "Logging in ..."
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
 
 # Initialize a role and group for normal users
+echo "Creating role for regular users ..."
 ./functions/add-role.sh "$REALM" "user-${WORKSPACE_NAME}" "User can login to workspace ${WORKSPACE_NAME}"
+echo "Creating group for regular users ..."
 ./functions/add-group.sh "$REALM" "${WORKSPACE_NAME}-users"
+echo "Adding realm role for regular users to group ..."
 ./functions/add-realm-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-users" "user-${WORKSPACE_NAME}"
+echo "Adding client role for regular users to group ..."
 ./functions/add-client-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-users" "realm-management" "view-users"
-echo "Associated group and role for users"
+echo "Associated group and role for users."
 
 # Initialize a role and group for coordinators
+echo "Creating role for coordinators ..."
 ./functions/add-role.sh "$REALM" "coordinator-${WORKSPACE_NAME}" "User can coordinate workspace ${WORKSPACE_NAME}"
+echo "Creating group for coordinators ..."
 ./functions/add-group.sh "$REALM" "${WORKSPACE_NAME}-coordinators"
+echo "Adding realm role workspace-coordinator ..."
 ./functions/add-realm-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-coordinators" "workspace-coordinator"
+echo "Adding realm role coordinator-${WORKSPACE_NAME} ...  "
 ./functions/add-realm-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-coordinators" "coordinator-${WORKSPACE_NAME}"
+echo "Adding client role to group ..."
 ./functions/add-client-role-to-group.sh "$REALM" "${WORKSPACE_NAME}-coordinators" "realm-management" "view-users"
-echo "Associated group and role for coordinators"
+echo "Associated group and role for coordinators."
 
 # Ensure that the coordinators can manage members of the users group
+echo "Creating coordinator role policy ..."
 ./functions/add-role-policy.sh "$REALM" "coordinator-${WORKSPACE_NAME}" "coordinator-${WORKSPACE_NAME}"
+echo "Enabling coordinator role policy ..."
 ./functions/enable-permissions-for-group.sh "$REALM" "${WORKSPACE_NAME}-users"
 
 # Update permission, as adding a new one does not work as expected
 GROUP_ID=$(./functions/get-group-id.sh "$REALM" "${WORKSPACE_NAME}-users")
+echo "Updating permissions coordinator role ..."
 ./functions/update-permission.sh "$REALM" "manage.membership.permission.group.$GROUP_ID" "workspace-coordinator"
 echo "Allowed coordinators to manage members of users group"
 
 # Create the testuser specified in parameters
+echo "Creating test user ..."
 ./functions/create-user.sh "$REALM" "$TESTUSER_USERNAME" "$TESTUSER_FIRSTNAME" "$TESTUSER_LASTNAME" "$TESTUSER_PASSWORD"
+echo "Adding test user to group ..."
 ./functions/add-user-to-group.sh "$REALM" "$TESTUSER_USERNAME" "${WORKSPACE_NAME}-users"
 
 # Create a first coordinator specified in parameters
+echo "Creating coordinator user ..."
 ./functions/create-user.sh "$REALM" "$COORDINATOR_USERNAME" "$COORDINATOR_FIRSTNAME" "$COORDINATOR_LASTNAME" "$COORDINATOR_PASSWORD"
+echo "Adding coordinator user to user group ..."
 ./functions/add-user-to-group.sh "$REALM" "$COORDINATOR_USERNAME" "${WORKSPACE_NAME}-users"
+echo "Adding coordinator user to coordinator group ..."
 ./functions/add-user-to-group.sh "$REALM" "$COORDINATOR_USERNAME" "${WORKSPACE_NAME}-coordinators"
 
 # Create a number of additional testusers
 if [ "$ADDITIONAL_TEST_USERS" == "true" ]; then
+    echo "Creating additional test users ..."
     ./functions/add-test-users.sh "$REALM" "$WORKSPACE_NAME"
 fi
 
 # Setup public and private clients for the current realm
+echo "Configuring private client ..."
 ./functions/add-private-client.sh "$REALM" "${WORKSPACE_NAME}-pluto" "$CLIENT_SECRET" "$REDIRECT_URL_FILE"
+echo "Configuring public client ..."
 ./functions/add-public-client.sh "$REALM" "${WORKSPACE_NAME}-public" "$REDIRECT_URL_FILE"
 
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response
+echo "Keycloak Workspace script finished."
 exit 0
