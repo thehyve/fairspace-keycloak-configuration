@@ -9,7 +9,7 @@
 #
 # The password is expected to be set as environment variable KEYCLOAK_PASSWORD
 #
-echo "Setting up hyperspace in keycloak"
+echo "Setting up Hyperspace in keycloak ..."
 PATH=$PATH:/opt/jboss/keycloak/bin
 
 # Set provided parameters
@@ -22,21 +22,28 @@ REALM="$3"
 ./wait-for-server-to-respond.sh "$SERVER" || exit 1
 
 # Login to keycloak first
+echo "Logging in ..."
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --password "$KEYCLOAK_PASSWORD" || exit 1
 
 # Add a realm and a hyperspace client for it
+echo "Creating realm and client ..."
 sed -e "s/\${REALM}/$REALM/g" ./hyperspace-config/hyperspace-realm.json | kcadm.sh create realms -f -
 cat ./hyperspace-config/hyperspace-client.json | kcadm.sh create clients -r "$REALM" -f -
 
 # Enable user management permissions on this realm
+echo "Enabling user management permissions ..."
 ./functions/enable-user-management-permissions.sh "$REALM"
+echo "Creating workspace coordinator role ..."
 ./functions/add-role.sh "$REALM" "workspace-coordinator" "User is a workspace coordinator"
+echo "Creating workspace coordinator role policy ..."
 ./functions/add-role-policy.sh "$REALM" "workspace-coordinator" "workspace-coordinator"
 
 # Update the existing permission, as adding new permissions does not actually
 # apply the permission
+echo "Updating permissions ..."
 ./functions/update-permission.sh "$REALM" "manage-group-membership.permission.users" "workspace-coordinator"
 
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response
+echo "Keycloak Hyperspace script finished."
 exit 0
