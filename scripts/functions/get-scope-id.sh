@@ -15,9 +15,6 @@ REALM=$1
 ENTITY_ID=$2
 SCOPE_NAME=$3
 
-REALM_MANAGEMENT_UUID=$($DIR/get-realm-management-uuid.sh "$REALM")
-if [ $? -ne 0 ]; then exit 1; fi
-
 SCOPE_ID=$(kcadm.sh get clients/$REALM_MANAGEMENT_UUID/authz/resource-server/resource -r $REALM -q name=$ENTITY_ID | jq -r ".[0].scopes[] | select(.name==\"$SCOPE_NAME\") | .id")
 
 if [ $? -ne 0 ] || [ -z "$SCOPE_ID" ]; then

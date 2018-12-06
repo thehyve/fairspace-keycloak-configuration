@@ -27,9 +27,6 @@ if [ $? -ne 0 ]; then exit 1; fi
 POLICY_ID=$(${DIR}/get-policy-id.sh "$REALM" "$POLICY_NAME")
 if [ $? -ne 0 ]; then exit 1; fi
 
-REALM_MANAGEMENT_UUID=$($DIR/get-realm-management-uuid.sh "$REALM")
-if [ $? -ne 0 ]; then exit 1; fi
-
 sed \
     -e "s/\${PERMISSION_NAME}/$PERMISSION_NAME/g" \
     -e "s/\${RESOURCE_ID}/$RESOURCE_ID/g" \
