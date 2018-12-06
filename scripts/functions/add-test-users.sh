@@ -15,6 +15,10 @@ WORKSPACE_NAME=$2
 
 source $DIR/../config.sh
 
+# Retrieve group identifiers only once
+USERS_GROUP_ID=$(./functions/get-group-id.sh "$REALM" "${WORKSPACE_NAME}-users")
+COORDINATORS_GROUP_ID=$(./functions/get-group-id.sh "$REALM" "${WORKSPACE_NAME}-coordinators")
+
 name=0
 
 for i in "${!USERNAMESPREFIXES[@]}"; do
@@ -23,7 +27,8 @@ for i in "${!USERNAMESPREFIXES[@]}"; do
     LASTNAME=${LASTNAMES[$name]}
 
     $DIR/create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
-    $DIR/add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-users"
+    USER_ID=$(${DIR}/get-user-id.sh "$REALM" "$USERNAME")
+    $DIR/add-user-to-group.sh "$REALM" "$USER_ID" "$USERS_GROUP_ID"
 
     echo "User $USERNAME - default user"
 
@@ -36,8 +41,9 @@ for i in "${!COORDINATORPREFIXES[@]}"; do
     LASTNAME=${LASTNAMES[$name]}
 
     $DIR/create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
-    $DIR/add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-users"
-    $DIR/add-user-to-group.sh "$REALM" "$USERNAME" "${WORKSPACE_NAME}-coordinators"
+    USER_ID=$(${DIR}/get-user-id.sh "$REALM" "$USERNAME")
+    $DIR/add-user-to-group.sh "$REALM" "$USER_ID" "$USERS_GROUP_ID"
+    $DIR/add-user-to-group.sh "$REALM" "$USER_ID" "$COORDINATORS_GROUP_ID"
 
     echo "User $USERNAME - coordinator"
 
