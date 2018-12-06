@@ -126,5 +126,5 @@ echo "Configuring public client ..."
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response
 echo "Keycloak Workspace script finished."
-echo "Finihed at " $(date -Iseconds)
+echo "Finished at " $(date -Iseconds)
 exit 0
