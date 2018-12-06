@@ -14,8 +14,7 @@ REALM=$1
 POLICY_NAME=$2
 ROLE_NAME=$3
 
-CLIENT_UUID=$(${DIR}/get-client-uuid.sh "$REALM" "realm-management")
-if [ $? -ne 0 ]; then exit 1; fi
+CLIENT_UUID=$REALM_MANAGEMENT_UUID
 
 ROLE_ID=$(${DIR}/get-role-id.sh "$REALM" "$ROLE_NAME")
 if [ $? -ne 0 ]; then exit 1; fi

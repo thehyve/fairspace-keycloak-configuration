@@ -63,8 +63,8 @@ docker run --rm -it \
   -e "TESTUSER_PASSWORD=welkom01" \
   -e "COORDINATOR_PASSWORD=verySecret01" \
   -e "CLIENT_SECRET=ed8722df-d968-4990-869c-88424a83512c" \
-  -e "KEYCLOAK_URL=http://192.168.99.100:30881/auth" \
-  -e "REALM=testing" \
+  -e "KEYCLOAK_URL=http://172.17.0.1:5100/auth" \
+  -e "REALM=test" \
   -e "WORKSPACE=test" \
   -e "URL_FILE=/opt/jboss/redirect-urls" \
   keycloak-config
