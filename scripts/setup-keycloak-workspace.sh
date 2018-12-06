@@ -11,6 +11,11 @@
 #                        Should at least contain the pluto url, after-logout url and jupyterhub url
 #   test-users:          Whether to add additional test users (e.g. for ci)
 #
+# By default the keycloak user logs in to the master realm. However, the script can also
+# be run by a realm-admin of the realm that must be configured. You can specify the LOGIN_REALM variable
+# to point to the right realm to login. Please note that the user needs the realm-management/realm-admin
+# to configure the workspace.
+#
 # The keycloak password is expected to be set as environment variable KEYCLOAK_PASSWORD
 # The client secret is expected to be set as environment variable CLIENT_SECRET
 # The testuser username is expected to be set as environment variable TESTUSER_USERNAME.
@@ -32,6 +37,9 @@ WORKSPACE_NAME="$4"
 REDIRECT_URL_FILE="$5"
 ADDITIONAL_TEST_USERS=${6:-true}
 
+# See if login realm has been provided
+LOGIN_REALM=${LOGIN_REALM:-master}
+
 # Parameters for first user
 TESTUSER_USERNAME="${TESTUSER_USERNAME:-test-$WORKSPACE_NAME}"
 TESTUSER_FIRSTNAME="First"
@@ -44,7 +52,7 @@ COORDINATOR_LASTNAME="Coordinator"
 
 # Login to keycloak first
 echo "Logging in ..."
-kcadm.sh config credentials --realm master --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
+kcadm.sh config credentials --realm $LOGIN_REALM --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
 
 # Retrieve default settings first
 export REALM_MANAGEMENT_UUID=$(./functions/get-realm-management-uuid.sh "$REALM")
@@ -91,7 +99,7 @@ echo "Allowed coordinators to manage members of users group"
 echo "Creating test user ..."
 ./functions/create-user.sh "$REALM" "$TESTUSER_USERNAME" "$TESTUSER_FIRSTNAME" "$TESTUSER_LASTNAME" "$TESTUSER_PASSWORD"
 USER_ID=$(./functions/get-user-id.sh "$REALM" "$TESTUSER_USERNAME")
-echo "Adding test user to group ..."
+echo "Adding test user ($USER_ID) to group ..."
 ./functions/add-user-to-group.sh "$REALM" "$USER_ID" "$USERS_GROUP_ID"
 
 # Create a first coordinator specified in parameters
