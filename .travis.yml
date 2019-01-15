@@ -38,12 +38,5 @@ jobs:
     - "./ci/versioning/set_next_version.sh"
 
 notifications:
-  hipchat:
-    on_pull_requests: false
-    rooms:
-      secure: "RVKMcqlxsMV5NuGNP6krGhm5Pz2E2lkg1zHphd6/+/3okaYxDM3+Ug4v5jL+b1LGp3b2xlNsCvNT4H0folnx8JLYxrf6FP69Nxts8SNN+Y2WeWDkUDNIvaMSM19FhKE46rtq99bpA+aFT+7MzciAaxxJFVG05XbkVGmSz6e6QJSE/csjgB4ryiWApisJLocqs+Jq50cJVJI4RWLlNyK2729kGsA76s0VFoCUJSx4s3xAYB9YxZCL405uQVgpBuJsvZwhmahG2l4S0MnhTDSwta9BiNlhDdKF4yC5dqK+zm62r3CafVG7cohjwAzltau/4cpCHthyu/gHaB5mlqpfMG34vLO6Pkl0j+LGLuQBc8JdSUxTYbK5vk9bEKoWcUJh1g8xinYy8N/HgFuhfqrebU+8rHVppf79InDXn1qQO6imcnpoVVYGwSo3QaLoswgA58chj6oV3rcLw+iPkXwUf9echv5KIcnLwE32cTblAksZYutPRKlbN6KPM9HBzobLOeQBZP2uimEPCerY4YnKaUa+SG9C6pNtQVLdbolpkN/KmM0dktDU7B1FD/vKXvCF+Uq7eZ/MBSa4zyRuvXKreP/VpIQLZ9s/uEPhFDTVi5L1VcfiwwKHBdyaw0lD5PHW3V0dvU4imcxSe8EH5HhzmzGkOf80HHfGNJUc9ElBP2M="
-    template:
-    - '<a href="%{build_url}">%{repository_slug}#%{build_number}</a> (%{branch} -
-      <a href="%{compare_url}">%{commit}</a> : %{author}): %{message}'
-    format: html
-    notify: true
+  slack:
+    secure: "lljmvfbOtlGihwzfa0QOzU/TSCMC9HOM95fQEKBUXT/NuMAp9GPefEJHjAv/bivjVrpPtXqz1QFch+92V2XfNRblmg6FgKdxNt+J/EahPTPKkScQ3Y2tzbU+MCqykvu23U0WVb4euQFeEKG/yQuhvn1e3b7MvUrtkLshNwHjfUE8JS0UNybn178AaUkXcbTtPH9C5GzL16R9Lr1/5XX1kvde3ut7MSPnXAWh6om87yulmIhrV5WpfZroK/YKuGa5pGVSeiDwAaax6NhaJh7qry67wNtnbzi7DlkXvkh4SBc8SqKIfJ2tIqTYsw435PZ+kxeLK4PWmSYkoEWJ2RPvO9876bN42yn5GQXQ8FjHtGtEPWgtiUGXo+fmI/Z5hO72mvsLa+Frr+Yepop/1bJwGfZWzDt+wqkkQwzaUo63QNFOwt9GrROM62euQWwM6Ytrj8nnvddrqjlqdLCLrlmFkykj+5LOugx/Q+ucaQFEfpg0cDmeMU6iGrP20L9ovLz8tRlLJS5jwtko650U6yQtv//G7ym++ICYYekIoDUunPRw4MlEXVeZtozD2Kn30L+7j0xmLgcYg+qNct8lthm46IHjwCb2qJIp03Un5wING95tzWVO1eeZdSjIVBJpDzgCQvVDmqjO9kwx7DIZOeg2BcqLyULjWl1LCuouSYxus2Q="
