@@ -1,4 +1,6 @@
-language: ruby
+dist: xenial
+
+language: minimal
 
 os:
 - linux
