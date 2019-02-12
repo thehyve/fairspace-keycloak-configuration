@@ -3,6 +3,8 @@ language: ruby
 os:
 - linux
 
+sudo: required
+
 env:
   global:
   - APPNAME="keycloak-configuration"
@@ -23,6 +25,12 @@ before_install:
 
 jobs:
   include:
+  - stage: Check
+    name: Check scripts for syntax errors and style issues
+    install:
+    - sudo apt-get install shellcheck
+    script:
+    - ./ci-syntax-check.sh
   - stage: Build
     name: Build and optionally push docker image
     services:
