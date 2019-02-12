@@ -26,7 +26,7 @@
 # The coordinator password is expected to be set as environment variable COORDINATOR_PASSWORD
 #
 echo "Setting up Workspace in keycloak ..."
-echo "Starting at " $(date -Iseconds)
+echo "Starting at $(date -Iseconds)"
 PATH=$PATH:/opt/jboss/keycloak/bin
 
 # Set provided parameters
@@ -52,10 +52,11 @@ COORDINATOR_LASTNAME="Coordinator"
 
 # Login to keycloak first
 echo "Logging in ..."
-kcadm.sh config credentials --realm $LOGIN_REALM --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
+kcadm.sh config credentials --realm "$LOGIN_REALM" --server "$SERVER" --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD" || exit 1
 
 # Retrieve default settings first
-export REALM_MANAGEMENT_UUID=$(./functions/get-realm-management-uuid.sh "$REALM")
+REALM_MANAGEMENT_UUID=$(./functions/get-realm-management-uuid.sh "$REALM")
+export REALM_MANAGEMENT_UUID
 
 # Initialize a role and group for normal users
 echo "Creating role for regular users ..."
@@ -126,5 +127,5 @@ echo "Configuring public client ..."
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response
 echo "Keycloak Workspace script finished."
-echo "Finished at " $(date -Iseconds)
+echo "Finished at $(date -Iseconds)"
 exit 0

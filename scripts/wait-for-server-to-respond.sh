@@ -6,7 +6,7 @@ wait_between_attempts=5
 SERVER="$1"
 
 echo "Waiting for server to be online at $SERVER"
-until $(curl --output /dev/null --silent --head --fail "$SERVER"); do
+until curl --output /dev/null --silent --head --fail "$SERVER"; do
     if [ ${attempt_counter} -eq ${max_attempts} ];then
       echo ""
       echo "Maximum of $max_attempts attempts reached"
@@ -14,7 +14,7 @@ until $(curl --output /dev/null --silent --head --fail "$SERVER"); do
     fi
 
     printf '.'
-    attempt_counter=$(($attempt_counter+1))
+    attempt_counter=$((attempt_counter+1))
     sleep $wait_between_attempts
 done
 
