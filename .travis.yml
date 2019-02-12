@@ -15,6 +15,8 @@ env:
   - SNAPSHOT_BRANCH="dev"
   - BUILD_SCRIPTS_REPO="fairspace/build-scripts"
   - DOCKER_USERNAME="fairspace"
+  - DEPLOYMENT_CONFIG_DIR="./config"
+  - GCP_PROJECT="fairspace-207108"
   # DOCKER_PASSWORD = ...
   - secure: "NYvg29LIJ+8skSS2F+c7ZGaLyYW4MV90s45F48DfbAZAh3SfR8trTxIez9Zw49d0anB6QhrXyOgE1M+pdMSB962raiQRBy71zPfMnNFlrJKHqrbKPHrnlrlgwsDQ3hMPlM1jiLwhv/ssbYa7EgfWdOK9K+QSu75670dGRlbNDRroyde9Ig/pYubktTebrxvFoCAUhr4UxpvhwkoCejqAdY6veswVbjpNS5F9P4RADetRjQFF+ry1v7JaCBc+7L+RXOiNzWWEswU98Hez7yg8Jq/oJeGoUeTQwSiTCUx3NhJ8sP0QoscXVhU8j2+VftfE+f8/bMvbGGOkomW/srQls3DUL9wmhtIzo2Sjpuf5ZMRany90fWuOGTrWZnoYQmJh2xj7/OB/3bzsgsAE9Y3rnhDMvtA05wduuEzwHoRPnjtXGBhfLr8r6b25uao1Wr0wlrH0TBegkaEwQIqR5tLYnzLeKzwq4BA7QrI+OkP3A7NK8Q7eNd3jNSbUfa4t7ZF4Pv6tH30rII8F/8W+YE8Dwg1Lca/WgXsHs9RmN7cOGuDCqALxE2qvMCDuD9lANZAbeXM2S5yG9j5LJ8DuFM15zZB9IhOVVJkBgUmqKn8s+20IURaa3rhSoVGDqsvtcP+bODVhWwSho8xTw/7M1SiftjtfcoqiWaKKIwqc/Uo6HtU="
   - GITHUB_USERNAME="fairspace-ci"
