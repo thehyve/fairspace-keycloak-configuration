@@ -29,7 +29,7 @@ before_install:
 - git clone https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/$BUILD_SCRIPTS_REPO ci
 - export BUILD_SCRIPTS_DIR=$(pwd)/ci
 - 'if [[ "$TRAVIS_BRANCH" = "$SNAPSHOT_BRANCH" ]]; then export DEPLOY_PLATFORM="GCP" ; fi'
-- 'if [[ "$TRAVIS_BRANCH" = "$RELEASE_BRANCH" ]]; then export DEPLOY_PLATFORM="AZURE" ; fi'
+- 'if [[ "$TRAVIS_BRANCH" = "$RELEASE_BRANCH" ]]; then export DEPLOY_PLATFORM="GCP" ; fi'
 - export INFRASTRUCTURE_PLATFORM="${DEPLOY_PLATFORM:-NONE}"
 - source ./ci/setup_env.sh
 
