@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# This script a realm role along with a group that provides the role to members
+# This script creates a realm role along with a group that provides the role to its members.
 #
 # Required arguments to this script are:
 #   realm:              Realm to create the role and group in
