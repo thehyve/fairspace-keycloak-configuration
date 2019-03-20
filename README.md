@@ -1,48 +1,48 @@
 # Keycloak configuration scripts
 
-This repository contains configuration scripts to setup
+This repository contains configuration scripts to configure
 keycloak when installing a new hyperspace of workspace.
-The scripts are executed from helm post-install hooks, with 
-the appropriate parameters.
+The scripts are usually executed via helm post-install hooks.
 
 ### Structure of keycloak concepts
-This paragraph describes the structure of the keycloak concepts and the mapping
-to fairspace concepts.
+This section describes the mapping of Keycloak concepts to Fairspace concepts.
 
-### Hyperspace 
+### Hyperspace
 Within keycloak, a hyperspace corresponds with a realm. When setting it up, a
 realm role `workspace-coordinator` is created, that allows one to actually add
-users to groups. Please note that a user needs specific permissions on group level 
-to actually manage group membership. See the next paragraph. 
+users to groups. Please note that a user needs specific permissions on group level
+to actually manage group membership. See the next paragraph.
 
 ### Workspace
-Within a hyperspace there can be many workspaces. For each workspace, a public 
-and a private client are created to do OIDC authentication. 
 
-Additionally, 2 user groups are created: 
-* _coordinators-<workspace>_ This group allows members to coordinate the workspace, i.e.
-  to manage membership of the group _users-<workspace>_. This effectively lets a coordinator
-  decide who can login to the workspace.
-  
-  To be exact: this group provides members with the `workspace-coordinator` and `coordinator-<workspace>`
-  roles, which allow the user to manage group membership in the security-admin-console.
-* _users-<workspace>_ This groups allows members to login to the workspace. Without this role, 
-  users can login but will see an error message immediately.
-  
-  To be exact: this group provides members with the `user-<workspace>`
-  role, which is checked within Pluto.
+A hyperspace can be shared by multiple workspaces. Each workspace has a public
+and a private OIDC authentication client in Keycloak.
+
+The scripts create three user groups per workspace:
+* _<workspace>-coordinators_: members of this group can manage membership
+  of the `<workspace>-users` and `<workspace>-datastewards` groups using the security admin
+  console. The `workspace-coordinator` and `coordinator-<workspace>` roles are mapped to this
+  group.
+
+* _<workspace>-users_: members of this group can use the workspace. Nonmembers can
+  log in, but will not be able to use the application. The `user-<workspace>` role is mapped
+  to this group.
+
+* _<workspace>-datastewards_: members of this group can edit the vocabulary. The
+  `datasteward-<workspace>` role is mapped to this group.
+
 
 ## Keycloak admin api
+
 The configurations scripts make use of the `kcadm.sh` script
 that calls the keycloak admin api from the command line.
-This simplifies the usage of the api a bit. Documentation can 
-be found at https://www.keycloak.org/docs/3.4/server_admin/#the-admin-cli 
+This simplifies the usage of the api a bit. More information can be
+found in [the Keycloak admin CLI documentation](https://www.keycloak.org/docs/3.4/server_admin/#the-admin-cli).
 
-The scripts are bundled into a docker container with the appropriate
-command line tools.
+The scripts and their dependencies are packaged in a Docker container.
 
 ## Local testing
-You can test the scripts locally by starting the 
+You can test the scripts locally by starting the
 docker container and mounting the scripts directory inside.
 
 The following command would do the trick:
