@@ -25,6 +25,10 @@ REALM="$3"
 echo "Logging in ..."
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --password "$KEYCLOAK_PASSWORD" || exit 1
 
+# Retrieve default settings first
+REALM_MANAGEMENT_UUID=$(./functions/get-realm-management-uuid.sh "$REALM")
+export REALM_MANAGEMENT_UUID
+
 # Add a realm and a hyperspace client for it
 echo "Creating realm and client ..."
 sed -e "s/\${REALM}/$REALM/g" ./hyperspace-config/hyperspace-realm.json | kcadm.sh create realms -f -
