@@ -38,15 +38,15 @@ kcadm.sh config credentials --realm "$LOGIN_REALM" --server "$SERVER" --user "$K
 echo "Adding redirect urls to client $CLIENT_ID ..."
 CLIENT_UUID=$(./functions/get-client-uuid.sh "$REALM" "$CLIENT_ID")
 
-existing_uris=$(kcadm.sh get clients/$CLIENT_UUID -r test --fields redirectUris --format csv)
-new_uri_array=$(./functions/parse-file-to-json-array.sh $REDIRECT_URL_FILE)
+existing_uris=$(kcadm.sh get "clients/$CLIENT_UUID" -r test --fields redirectUris --format csv)
+new_uri_array=$(./functions/parse-file-to-json-array.sh "$REDIRECT_URL_FILE")
 
 # use bash replacement syntax to combine the existing list with the new list
 # See e.g. https://stackoverflow.com/a/6744040 for details
 combined_array=${new_uri_array//\[/[$existing_uris,}
 
 echo "   Combined set of redirect urls to set: $combined_array"
-kcadm.sh update clients/$CLIENT_UUID -r $REALM -s "redirectUris=$combined_array"
+kcadm.sh update "clients/$CLIENT_UUID" -r $REALM -s "redirectUris=$combined_array"
 
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response
