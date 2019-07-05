@@ -46,7 +46,7 @@ new_uri_array=$(./functions/parse-file-to-json-array.sh "$REDIRECT_URL_FILE")
 combined_array=${new_uri_array//\[/[$existing_uris,}
 
 echo "   Combined set of redirect urls to set: $combined_array"
-kcadm.sh update "clients/$CLIENT_UUID" -r $REALM -s "redirectUris=$combined_array"
+kcadm.sh update "clients/$CLIENT_UUID" -r "$REALM" -s "redirectUris=$combined_array"
 
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response
