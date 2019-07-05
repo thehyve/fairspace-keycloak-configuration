@@ -38,7 +38,7 @@ kcadm.sh config credentials --realm "$LOGIN_REALM" --server "$SERVER" --user "$K
 echo "Adding redirect urls to client $CLIENT_ID ..."
 CLIENT_UUID=$(./functions/get-client-uuid.sh "$REALM" "$CLIENT_ID")
 
-existing_uris=$(kcadm.sh get "clients/$CLIENT_UUID" -r test --fields redirectUris --format csv)
+existing_uris=$(kcadm.sh get "clients/$CLIENT_UUID" -r "$REALM" --fields redirectUris --format csv)
 new_uri_array=$(./functions/parse-file-to-json-array.sh "$REDIRECT_URL_FILE")
 
 # use bash replacement syntax to combine the existing list with the new list
