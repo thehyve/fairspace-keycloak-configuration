@@ -47,6 +47,24 @@ echo "Creating workspace coordinator role policy ..."
 echo "Updating permissions ..."
 ./functions/update-permission.sh "$REALM" "manage-group-membership.permission.users" "workspace-coordinator"
 
+# Initialize a role and group for organisation admins
+echo "Creating role and group for organisation admins..."
+ORGANISATION_ADMINS_GROUP_ID=$(./functions/create-role-and-group.sh "$REALM" "admin" "organisation" "User can create workspaces")
+
+echo "Adding realm role organisation-admin ..."
+./functions/add-realm-role-to-group.sh "$REALM" "$ORGANISATION_ADMINS_GROUP_ID" "organisation-admin"
+echo "Adding client role to group ..."
+./functions/add-client-role-to-group.sh "$REALM" "$ORGANISATION_ADMINS_GROUP_ID" "realm-management" "view-users"
+echo "Associated group and role for organisation admins."
+
+# Create a first organisation admin specified in parameters
+echo "Creating organisation admin user ..."
+ORGANISATION_ADMIN_USERNAME="organisation-admin-$REALM"
+./functions/create-user.sh "$REALM" "$ORGANISATION_ADMIN_USERNAME" "First" "Organisation Admin" "$ORGANISATION_ADMIN_PASSWORD"
+ORGANISATION_ADMIN_ID=$(./functions/get-user-id.sh "$REALM" "$ORGANISATION_ADMIN_USERNAME")
+echo "Adding coordinator user to coordinator group ..."
+./functions/add-user-to-group.sh "$REALM" "$ORGANISATION_ADMIN_ID" "$ORGANISATION_ADMINS_GROUP_ID"
+
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response
 echo "Keycloak Hyperspace script finished."

@@ -8,10 +8,11 @@ The scripts are usually executed via helm post-install hooks.
 This section describes the mapping of Keycloak concepts to Fairspace concepts.
 
 ### Hyperspace
-Within keycloak, a hyperspace corresponds with a realm. When setting it up, a
-realm role `workspace-coordinator` is created, that allows one to actually add
+Within keycloak, a hyperspace corresponds with a realm. When setting it up, two roles are added:
+* `workspace-coordinator`, that allows one to actually add
 users to groups. Please note that a user needs specific permissions on group level
 to actually manage group membership. See the next paragraph.
+* `organisation-admin`, that allows to create new workspaces
 
 ### Workspace
 
@@ -62,6 +63,7 @@ docker run --rm -it \
   -e "KEYCLOAK_PASSWORD=keycloak" \
   -e "TESTUSER_PASSWORD=welkom01" \
   -e "COORDINATOR_PASSWORD=verySecret01" \
+  -e "ORGANISATION_ADMIN_PASSWORD=verySecret02" \
   -e "CLIENT_SECRET=ed8722df-d968-4990-869c-88424a83512c" \
   -e "KEYCLOAK_URL=http://172.17.0.1:5100/auth" \
   -e "REALM=test" \
