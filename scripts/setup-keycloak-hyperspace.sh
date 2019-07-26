@@ -17,6 +17,8 @@ SERVER="$1"
 USER="$2"
 REALM="$3"
 
+ORGANISATION_ADMIN_USERNAME="${ORGANISATION_ADMIN_USERNAME:-organisation-admin-$REALM}"
+
 # Wait for the server to be online. This may take a while, as the webserver waits for postgres
 # If the server will not be up after 5 minutes, the script will die and helm will start a new container
 ./wait-for-server-to-respond.sh "$SERVER" || exit 1
@@ -59,7 +61,6 @@ echo "Associated group and role for organisation admins."
 
 # Create a first organisation admin specified in parameters
 echo "Creating organisation admin user ..."
-ORGANISATION_ADMIN_USERNAME="organisation-admin-$REALM"
 ./functions/create-user.sh "$REALM" "$ORGANISATION_ADMIN_USERNAME" "First" "Organisation Admin" "$ORGANISATION_ADMIN_PASSWORD"
 ORGANISATION_ADMIN_ID=$(./functions/get-user-id.sh "$REALM" "$ORGANISATION_ADMIN_USERNAME")
 echo "Adding coordinator user to coordinator group ..."
