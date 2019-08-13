@@ -51,10 +51,10 @@ echo "Updating permissions ..."
 
 # Initialize a role and group for organisation admins
 echo "Creating role and group for organisation admins..."
-ORGANISATION_ADMINS_GROUP_ID=$(./functions/create-role-and-group.sh "$REALM" "organisation" "admin" "User can create workspaces")
+ORGANISATION_ADMINS_GROUP_ID=$(./functions/create-role-and-group.sh "$REALM" "admin"  "organisation" "User can create workspaces")
 
 echo "Adding realm role organisation-admin ..."
-./functions/add-realm-role-to-group.sh "$REALM" "$ORGANISATION_ADMINS_GROUP_ID" "organisation-admin"
+./functions/add-realm-role-to-group.sh "$REALM" "$ORGANISATION_ADMINS_GROUP_ID" "admin-organisation"
 echo "Adding client role to group ..."
 ./functions/add-client-role-to-group.sh "$REALM" "$ORGANISATION_ADMINS_GROUP_ID" "realm-management" "view-users"
 echo "Associated group and role for organisation admins."
