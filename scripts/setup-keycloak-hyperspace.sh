@@ -6,8 +6,12 @@
 #   url:      Full url to the keycloak server, including /auth. For example: http://localhost:8080/auth
 #   username: Username of the administrative user to login
 #   realm:    Name of the realm to create
+#   redirect-url-file:   Name of the file that contains all the redirect urls for the workspace.
+#                        Should at least contain the pluto url, after-logout url and jupyterhub url
 #
 # The password is expected to be set as environment variable KEYCLOAK_PASSWORD
+# The client secret is expected to be set as environment variable CLIENT_SECRET
+# The client id can be set as environment variable CLIENT_ID. It defaults to hyperspace
 #
 echo "Setting up Hyperspace in keycloak ..."
 PATH=$PATH:/opt/jboss/keycloak/bin
@@ -16,8 +20,10 @@ PATH=$PATH:/opt/jboss/keycloak/bin
 SERVER="$1"
 USER="$2"
 REALM="$3"
+REDIRECT_URL_FILE="$4"
 
 ORGANISATION_ADMIN_USERNAME="${ORGANISATION_ADMIN_USERNAME:-organisation-admin-$REALM}"
+CLIENT_ID="${CLIENT_ID:-hyperspace}"
 
 # Wait for the server to be online. This may take a while, as the webserver waits for postgres
 # If the server will not be up after 5 minutes, the script will die and helm will start a new container
@@ -34,7 +40,9 @@ export REALM_MANAGEMENT_UUID
 # Add a realm and a hyperspace client for it
 echo "Creating realm and client ..."
 sed -e "s/\${REALM}/$REALM/g" ./hyperspace-config/hyperspace-realm.json | kcadm.sh create realms -f -
-kcadm.sh create clients -r "$REALM" -f - < hyperspace-config/hyperspace-client.json
+
+echo "Configuring private client ..."
+./functions/add-private-client.sh "$REALM" "$CLIENT_ID" "$CLIENT_SECRET" "$REDIRECT_URL_FILE"
 
 # Enable user management permissions on this realm
 echo "Enabling user management permissions ..."
