@@ -18,12 +18,6 @@
 #
 # The keycloak password is expected to be set as environment variable KEYCLOAK_PASSWORD
 # The client secret is expected to be set as environment variable CLIENT_SECRET
-# The testuser username is expected to be set as environment variable TESTUSER_USERNAME.
-#    If not set, if defaults to 'test-$WORKSPACE_NAME'
-# The testuser password is expected to be set as environment variable TESTUSER_PASSWORD
-# The coordinator username is expected to be set as environment variable COORDINATOR_USERNAME.
-#    If not set, if defaults to 'coordinator-$WORKSPACE_NAME'
-# The coordinator password is expected to be set as environment variable COORDINATOR_PASSWORD
 #
 echo "Setting up Workspace in keycloak ..."
 echo "Starting at $(date -Iseconds)"
@@ -35,25 +29,9 @@ KEYCLOAK_USER="$2"
 REALM="$3"
 WORKSPACE_NAME="$4"
 REDIRECT_URL_FILE="$5"
-ADDITIONAL_TEST_USERS=${6:-true}
 
 # See if login realm has been provided
 LOGIN_REALM=${LOGIN_REALM:-master}
-
-# Parameters for first user
-TESTUSER_USERNAME="${TESTUSER_USERNAME:-test-$WORKSPACE_NAME}"
-TESTUSER_FIRSTNAME="First"
-TESTUSER_LASTNAME="User"
-
-# Parameters for first coordinator
-COORDINATOR_USERNAME="${COORDINATOR_USERNAME:-coordinator-$WORKSPACE_NAME}"
-COORDINATOR_FIRSTNAME="First"
-COORDINATOR_LASTNAME="Coordinator"
-
-# Parameters for first coordinator
-DATASTEWARD_USERNAME="${DATASTEWARD_USERNAME:-datasteward-$WORKSPACE_NAME}"
-DATASTEWARD_FIRSTNAME="First"
-DATASTEWARD_LASTNAME="Data Steward"
 
 # Login to keycloak first
 echo "Logging in ..."
@@ -98,39 +76,6 @@ echo "Updating permissions coordinator role ..."
 ./functions/update-permission.sh "$REALM" "manage.membership.permission.group.$USERS_GROUP_ID" "workspace-coordinator"
 ./functions/update-permission.sh "$REALM" "manage.membership.permission.group.$DATASTEWARDS_GROUP_ID" "workspace-coordinator"
 echo "Allowed coordinators to manage members of users and datastewards group"
-
-echo "--- Initializing test users ---"
-
-# Create the testuser specified in parameters
-echo "Creating test user ..."
-./functions/create-user.sh "$REALM" "$TESTUSER_USERNAME" "$TESTUSER_FIRSTNAME" "$TESTUSER_LASTNAME" "$TESTUSER_PASSWORD"
-USER_ID=$(./functions/get-user-id.sh "$REALM" "$TESTUSER_USERNAME")
-echo "Adding test user ($USER_ID) to group ..."
-./functions/add-user-to-group.sh "$REALM" "$USER_ID" "$USERS_GROUP_ID"
-
-# Create a first coordinator specified in parameters
-echo "Creating coordinator user ..."
-./functions/create-user.sh "$REALM" "$COORDINATOR_USERNAME" "$COORDINATOR_FIRSTNAME" "$COORDINATOR_LASTNAME" "$COORDINATOR_PASSWORD"
-COORDINATOR_ID=$(./functions/get-user-id.sh "$REALM" "$COORDINATOR_USERNAME")
-echo "Adding coordinator user to user group ..."
-./functions/add-user-to-group.sh "$REALM" "$COORDINATOR_ID" "$USERS_GROUP_ID"
-echo "Adding coordinator user to coordinator group ..."
-./functions/add-user-to-group.sh "$REALM" "$COORDINATOR_ID" "$COORDINATORS_GROUP_ID"
-
-# Create a first datasteward specified in parameters
-echo "Creating data steward user ..."
-./functions/create-user.sh "$REALM" "$DATASTEWARD_USERNAME" "$DATASTEWARD_FIRSTNAME" "$DATASTEWARD_LASTNAME" "$DATASTEWARD_PASSWORD"
-DATASTEWARD_ID=$(./functions/get-user-id.sh "$REALM" "$DATASTEWARD_USERNAME")
-echo "Adding data steward to user group ..."
-./functions/add-user-to-group.sh "$REALM" "$DATASTEWARD_ID" "$USERS_GROUP_ID"
-echo "Adding data steward user to datasteward group ..."
-./functions/add-user-to-group.sh "$REALM" "$DATASTEWARD_ID" "$DATASTEWARDS_GROUP_ID"
-
-# Create a number of additional testusers
-if [ "$ADDITIONAL_TEST_USERS" == "true" ]; then
-    echo "Creating additional test users ..."
-    ./functions/add-test-users.sh "$REALM" "$WORKSPACE_NAME"
-fi
 
 echo "--- Configuring clients ---"
 

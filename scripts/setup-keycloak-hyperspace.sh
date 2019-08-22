@@ -8,8 +8,13 @@
 #   realm:    Name of the realm to create
 #   redirect-url-file:   Name of the file that contains all the redirect urls for the workspace.
 #                        Should at least contain the pluto url, after-logout url and jupyterhub url
+#   additional_users:   If set to true, a number of test users will be added to keycloak for testing
+#                       or demo purposes
 #
 # The password is expected to be set as environment variable KEYCLOAK_PASSWORD
+# The organisation admin username can be set as environment variable ORGANISATION_ADMIN_USERNAME. It defaults to organisation-admin
+# The organisation admin password is expected to be set as environment variable ORGANISATION_ADMIN_PASSWORD
+# The testuser password is expected to be set as environment variable TESTUSER_PASSWORD
 # The client secret is expected to be set as environment variable CLIENT_SECRET
 # The client id can be set as environment variable CLIENT_ID. It defaults to hyperspace
 #
@@ -21,8 +26,9 @@ SERVER="$1"
 USER="$2"
 REALM="$3"
 REDIRECT_URL_FILE="$4"
+ADDITIONAL_TEST_USERS=${5:-true}
 
-ORGANISATION_ADMIN_USERNAME="${ORGANISATION_ADMIN_USERNAME:-organisation-admin-$REALM}"
+ORGANISATION_ADMIN_USERNAME="${ORGANISATION_ADMIN_USERNAME:-organisation-admin}"
 CLIENT_ID="${CLIENT_ID:-hyperspace}"
 
 # Wait for the server to be online. This may take a while, as the webserver waits for postgres
@@ -33,13 +39,13 @@ CLIENT_ID="${CLIENT_ID:-hyperspace}"
 echo "Logging in ..."
 kcadm.sh config credentials --realm master --server "$SERVER" --user "$USER" --password "$KEYCLOAK_PASSWORD" || exit 1
 
-# Retrieve default settings first
-REALM_MANAGEMENT_UUID=$(./functions/get-realm-management-uuid.sh "$REALM")
-export REALM_MANAGEMENT_UUID
-
 # Add a realm and a hyperspace client for it
 echo "Creating realm and client ..."
 sed -e "s/\${REALM}/$REALM/g" ./hyperspace-config/hyperspace-realm.json | kcadm.sh create realms -f -
+
+# Retrieve default settings first
+REALM_MANAGEMENT_UUID=$(./functions/get-realm-management-uuid.sh "$REALM")
+export REALM_MANAGEMENT_UUID
 
 echo "Configuring private client ..."
 ./functions/add-private-client.sh "$REALM" "$CLIENT_ID" "$CLIENT_SECRET" "$REDIRECT_URL_FILE"
@@ -73,6 +79,12 @@ echo "Creating organisation admin user ..."
 ORGANISATION_ADMIN_ID=$(./functions/get-user-id.sh "$REALM" "$ORGANISATION_ADMIN_USERNAME")
 echo "Adding coordinator user to coordinator group ..."
 ./functions/add-user-to-group.sh "$REALM" "$ORGANISATION_ADMIN_ID" "$ORGANISATION_ADMINS_GROUP_ID"
+
+# Create a number of additional testusers
+if [ "$ADDITIONAL_TEST_USERS" == "true" ]; then
+    echo "--- Creating additional test users ... ---"
+    ./functions/add-test-users.sh "$REALM"
+fi
 
 # Send 0 response status as some keycloak scrips may have been executed before
 # In that case, the kcadm.sh script will return a non-zero response
