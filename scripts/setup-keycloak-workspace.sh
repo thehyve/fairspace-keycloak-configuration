@@ -86,17 +86,24 @@ echo "Creating role and group for data stewards ..."
 DATASTEWARDS_GROUP_ID=$(./functions/create-role-and-group.sh "$REALM" "datasteward" "${WORKSPACE_NAME}" "User is data steward in workspace ${WORKSPACE_NAME}")
 echo "Associated group and role for data stewards."
 
+# Initialize a role and group for sparql users
+echo "Creating role and group for sparql users ..."
+SPARQL_GROUP_ID=$(./functions/create-role-and-group.sh "$REALM" "sparqluser" "${WORKSPACE_NAME}" "User can execute sparql queries in workspace ${WORKSPACE_NAME}")
+echo "Associated group and role for sparql users."
+
 # Ensure that the coordinators can manage members of the users group
 echo "Creating coordinator role policy ..."
 ./functions/add-role-policy.sh "$REALM" "coordinator-${WORKSPACE_NAME}" "coordinator-${WORKSPACE_NAME}"
 echo "Enabling coordinator role policy for users and datastewards groups..."
 ./functions/enable-permissions-for-group.sh "$REALM" "$USERS_GROUP_ID"
 ./functions/enable-permissions-for-group.sh "$REALM" "$DATASTEWARDS_GROUP_ID"
+./functions/enable-permissions-for-group.sh "$REALM" "$SPARQL_GROUP_ID"
 
 # Update permission, as adding a new one does not work as expected
 echo "Updating permissions coordinator role ..."
 ./functions/update-permission.sh "$REALM" "manage.membership.permission.group.$USERS_GROUP_ID" "workspace-coordinator"
 ./functions/update-permission.sh "$REALM" "manage.membership.permission.group.$DATASTEWARDS_GROUP_ID" "workspace-coordinator"
+./functions/update-permission.sh "$REALM" "manage.membership.permission.group.$SPARQL_GROUP_ID" "workspace-coordinator"
 echo "Allowed coordinators to manage members of users and datastewards group"
 
 echo "--- Initializing test users ---"
