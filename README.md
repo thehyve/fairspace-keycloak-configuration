@@ -75,6 +75,7 @@ docker run --rm -it \
 That would allow you to run the `setup-keycloak-workspace.sh` script as follows:
 
 ```
+./setup-keycloak-hyperspace.sh $KEYCLOAK_URL $KEYCLOAK_USER $REALM $URL_FILE
 ./setup-keycloak-workspace.sh $KEYCLOAK_URL $KEYCLOAK_USER $REALM $WORKSPACE $URL_FILE
 ```
 
