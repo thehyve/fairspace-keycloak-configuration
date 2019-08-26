@@ -5,48 +5,20 @@
 #
 # Required arguments to this script are:
 #   realm:              Realm to store the user in
-#   workspace-name:     Name of the workspace to create the
 #
 # An authenticated session for keycloak is assumed to be present.
 #
 DIR=$(dirname "$0")
 REALM=$1
-WORKSPACE_NAME=$2
 
 source $DIR/../config.sh
 
-# Retrieve group identifiers only once
-USERS_GROUP_ID=$(./functions/get-group-id.sh "$REALM" "${WORKSPACE_NAME}-users")
-COORDINATORS_GROUP_ID=$(./functions/get-group-id.sh "$REALM" "${WORKSPACE_NAME}-coordinators")
-
-name=0
-
-for i in "${!USERNAMESPREFIXES[@]}"; do
-    USERNAME="${USERNAMESPREFIXES[$i]}-$WORKSPACE_NAME"
-    FIRSTNAME=${FIRSTNAMES[$name]}
-    LASTNAME=${LASTNAMES[$name]}
+for i in "${!USERNAMES[@]}"; do
+    USERNAME="${USERNAMES[$i]}"
+    FIRSTNAME=${FIRSTNAMES[$i]}
+    LASTNAME=${LASTNAMES[$i]}
 
     $DIR/create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
-    USER_ID=$(${DIR}/get-user-id.sh "$REALM" "$USERNAME")
-    $DIR/add-user-to-group.sh "$REALM" "$USER_ID" "$USERS_GROUP_ID"
 
-    echo "User $USERNAME - default user"
-
-    ((name++))
+    echo "  User $USERNAME ($FIRSTNAME $LASTNAME)"
 done
-
-for i in "${!COORDINATORPREFIXES[@]}"; do
-    USERNAME="${COORDINATORPREFIXES[$i]}-$WORKSPACE_NAME"
-    FIRSTNAME=${FIRSTNAMES[$name]}
-    LASTNAME=${LASTNAMES[$name]}
-
-    $DIR/create-user.sh "$REALM" "$USERNAME" "$FIRSTNAME" "$LASTNAME" "$TESTUSER_PASSWORD"
-    USER_ID=$(${DIR}/get-user-id.sh "$REALM" "$USERNAME")
-    $DIR/add-user-to-group.sh "$REALM" "$USER_ID" "$USERS_GROUP_ID"
-    $DIR/add-user-to-group.sh "$REALM" "$USER_ID" "$COORDINATORS_GROUP_ID"
-
-    echo "User $USERNAME - coordinator"
-
-    ((name++))
-done
-
