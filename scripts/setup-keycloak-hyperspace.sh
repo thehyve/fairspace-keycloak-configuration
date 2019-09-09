@@ -6,8 +6,8 @@
 #   url:      Full url to the keycloak server, including /auth. For example: http://localhost:8080/auth
 #   username: Username of the administrative user to login
 #   realm:    Name of the realm to create
-#   redirect-url-file:   Name of the file that contains all the redirect urls for the workspace.
-#                        Should at least contain the pluto url, after-logout url and jupyterhub url
+#   redirect-url-file:  Name of the file that contains all the redirect urls for the workspace.
+#                       Should at least contain the pluto url, after-logout url and jupyterhub url
 #   additional_users:   If set to true, a number of test users will be added to keycloak for testing
 #                       or demo purposes
 #
@@ -53,32 +53,29 @@ echo "Configuring private client ..."
 # Enable user management permissions on this realm
 echo "Enabling user management permissions ..."
 ./functions/enable-user-management-permissions.sh "$REALM"
-echo "Creating workspace coordinator role ..."
-./functions/add-role.sh "$REALM" "workspace-coordinator" "User is a workspace coordinator"
-echo "Creating workspace coordinator role policy ..."
-./functions/add-role-policy.sh "$REALM" "workspace-coordinator" "workspace-coordinator"
+
+# Add roles
+echo "Creating role for organisation admins..."
+./functions/add-role.sh "$REALM" "organisation-admin" "User can manage workspaces"
+
+# Add policies to ensure these roles have certain access rights
+echo "Creating role policy for organisation admins ..."
+./functions/add-role-policy.sh "$REALM" "organisation-admin" "organisation-admin"
 
 # Update the existing permission, as adding new permissions does not actually
 # apply the permission
-echo "Updating permissions ..."
-./functions/update-permission.sh "$REALM" "manage-group-membership.permission.users" "workspace-coordinator"
-
-# Initialize a role and group for organisation admins
-echo "Creating role and group for organisation admins..."
-ORGANISATION_ADMINS_GROUP_ID=$(./functions/create-role-and-group.sh "$REALM" "admin"  "organisation" "User can create workspaces")
-
-echo "Adding realm role organisation-admin ..."
-./functions/add-realm-role-to-group.sh "$REALM" "$ORGANISATION_ADMINS_GROUP_ID" "admin-organisation"
-echo "Adding client role to group ..."
-./functions/add-client-role-to-group.sh "$REALM" "$ORGANISATION_ADMINS_GROUP_ID" "realm-management" "view-users"
-echo "Associated group and role for organisation admins."
+echo "Updating permissions for organisation admins..."
+functions/add-policy-for-permission.sh "$REALM" "map-roles.permission.users" "organisation-admin"
+functions/add-policy-for-permission.sh "$REALM" "view.permission.users" "organisation-admin"
 
 # Create a first organisation admin specified in parameters
 echo "Creating organisation admin user ..."
 ./functions/create-user.sh "$REALM" "$ORGANISATION_ADMIN_USERNAME" "First" "Organisation Admin" "$ORGANISATION_ADMIN_PASSWORD"
+
+echo "Adding role for organisation admin ..."
 ORGANISATION_ADMIN_ID=$(./functions/get-user-id.sh "$REALM" "$ORGANISATION_ADMIN_USERNAME")
-echo "Adding coordinator user to coordinator group ..."
-./functions/add-user-to-group.sh "$REALM" "$ORGANISATION_ADMIN_ID" "$ORGANISATION_ADMINS_GROUP_ID"
+ORGANISATION_ADMIN_ROLE_ID=$(./functions/get-role-id.sh "$REALM" "organisation-admin")
+./functions/add-role-to-user.sh "$REALM" "$ORGANISATION_ADMIN_ID" "$ORGANISATION_ADMIN_ROLE_ID" "organisation-admin"
 
 # Create a number of additional testusers
 if [ "$ADDITIONAL_TEST_USERS" == "true" ]; then
