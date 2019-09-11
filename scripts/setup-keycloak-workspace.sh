@@ -72,6 +72,10 @@ functions/add-policy-for-permission.sh "$REALM" "map-roles.permission.users" "co
 functions/add-policy-for-permission.sh "$REALM" "map-role.permission.$USER_ROLE_ID" "coordinator-${WORKSPACE_NAME}"
 functions/add-policy-for-permission.sh "$REALM" "map-role.permission.$DATASTEWARD_ROLE_ID" "coordinator-${WORKSPACE_NAME}"
 functions/add-policy-for-permission.sh "$REALM" "map-role.permission.$SPARQLUSER_ROLE_ID" "coordinator-${WORKSPACE_NAME}"
+
+./functions/add-composite-role.sh "$REALM" "$COORDINATOR_ROLE_ID" "realm-management" "query-clients"
+./functions/add-composite-role.sh "$REALM" "$COORDINATOR_ROLE_ID" "realm-management" "view-realm"
+
 echo "Allowed coordinators to manage members of users and datastewards group"
 
 echo "--- Configuring clients ---"
