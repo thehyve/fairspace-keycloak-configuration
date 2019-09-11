@@ -1,6 +1,6 @@
 {
   "name":"${PERMISSION_NAME}",
-  "policies":[
-    "${POLICY_ID}"
-  ]
+  "policies":${POLICIES},
+  "decisionStrategy": "AFFIRMATIVE",
+  "logic": "POSITIVE"
 }

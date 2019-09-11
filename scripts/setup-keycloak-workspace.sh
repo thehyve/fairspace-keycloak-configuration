@@ -9,7 +9,6 @@
 #   workspace:    Name of the workspace to create
 #   redirect-url-file:   Name of the file that contains all the redirect urls for the workspace.
 #                        Should at least contain the pluto url, after-logout url and jupyterhub url
-#   test-users:          Whether to add additional test users (e.g. for ci)
 #
 # By default the keycloak user logs in to the master realm. However, the script can also
 # be run by a realm-admin of the realm that must be configured. You can specify the LOGIN_REALM variable
@@ -41,47 +40,42 @@ kcadm.sh config credentials --realm "$LOGIN_REALM" --server "$SERVER" --user "$K
 REALM_MANAGEMENT_UUID=$(./functions/get-realm-management-uuid.sh "$REALM")
 export REALM_MANAGEMENT_UUID
 
-echo "--- Initializing roles and groups ---"
+echo "--- Initializing roles ---"
 
-# Initialize a role and group for normal users
-echo "Creating role and group for regular users ..."
-USERS_GROUP_ID=$(./functions/create-role-and-group.sh "$REALM" "user" "${WORKSPACE_NAME}" "User can login to workspace ${WORKSPACE_NAME}")
-echo "Provide regular users with the possibility to see users in keycloak"
-./functions/add-client-role-to-group.sh "$REALM" "$USERS_GROUP_ID" "realm-management" "view-users"
+# Initialize roles
+./functions/add-role.sh "$REALM" "user-${WORKSPACE_NAME}" "User can login to workspace ${WORKSPACE_NAME}"
+./functions/add-role.sh "$REALM" "coordinator-${WORKSPACE_NAME}" "User can coordinate workspace ${WORKSPACE_NAME}"
+./functions/add-role.sh "$REALM" "datasteward-${WORKSPACE_NAME}" "User is data steward in workspace ${WORKSPACE_NAME}"
+./functions/add-role.sh "$REALM" "sparqluser-${WORKSPACE_NAME}" "User can execute sparql queries in workspace ${WORKSPACE_NAME}"
 
-# Initialize a role and group for coordinators
-echo "Creating role and group for coordinators ..."
-COORDINATORS_GROUP_ID=$(./functions/create-role-and-group.sh "$REALM" "coordinator" "${WORKSPACE_NAME}" "User can coordinate workspace ${WORKSPACE_NAME}")
+USER_ROLE_ID=$(./functions/get-role-id.sh "$REALM" "user-${WORKSPACE_NAME}")
+COORDINATOR_ROLE_ID=$(./functions/get-role-id.sh "$REALM" "coordinator-${WORKSPACE_NAME}")
+DATASTEWARD_ROLE_ID=$(./functions/get-role-id.sh "$REALM" "datasteward-${WORKSPACE_NAME}")
+SPARQLUSER_ROLE_ID=$(./functions/get-role-id.sh "$REALM" "sparqluser-${WORKSPACE_NAME}")
 
-echo "Adding realm role workspace-coordinator ..."
-./functions/add-realm-role-to-group.sh "$REALM" "$COORDINATORS_GROUP_ID" "workspace-coordinator"
-echo "Adding client role to group ..."
-./functions/add-client-role-to-group.sh "$REALM" "$COORDINATORS_GROUP_ID" "realm-management" "view-users"
-echo "Associated group and role for coordinators."
-
-# Initialize a role and group for data stewards
-echo "Creating role and group for data stewards ..."
-DATASTEWARDS_GROUP_ID=$(./functions/create-role-and-group.sh "$REALM" "datasteward" "${WORKSPACE_NAME}" "User is data steward in workspace ${WORKSPACE_NAME}")
-echo "Associated group and role for data stewards."
-
-# Initialize a role and group for sparql users
-echo "Creating role and group for sparql users ..."
-SPARQL_GROUP_ID=$(./functions/create-role-and-group.sh "$REALM" "sparqluser" "${WORKSPACE_NAME}" "User can execute sparql queries in workspace ${WORKSPACE_NAME}")
-echo "Associated group and role for sparql users."
+# Make sure the roles map to the right permissions
+echo "--- Creating policies for roles ---"
+./functions/add-role-policy.sh "$REALM" "user-${WORKSPACE_NAME}" "user-${WORKSPACE_NAME}"
+./functions/add-role-policy.sh "$REALM" "coordinator-${WORKSPACE_NAME}" "coordinator-${WORKSPACE_NAME}"
 
 # Ensure that the coordinators can manage members of the users group
-echo "Creating coordinator role policy ..."
-./functions/add-role-policy.sh "$REALM" "coordinator-${WORKSPACE_NAME}" "coordinator-${WORKSPACE_NAME}"
-echo "Enabling coordinator role policy for users and datastewards groups..."
-./functions/enable-permissions-for-group.sh "$REALM" "$USERS_GROUP_ID"
-./functions/enable-permissions-for-group.sh "$REALM" "$DATASTEWARDS_GROUP_ID"
-./functions/enable-permissions-for-group.sh "$REALM" "$SPARQL_GROUP_ID"
+echo "--- Enabling permissions for roles ---"
+./functions/enable-permissions-for-role.sh "$REALM" "$USER_ROLE_ID"
+./functions/enable-permissions-for-role.sh "$REALM" "$COORDINATOR_ROLE_ID"
+./functions/enable-permissions-for-role.sh "$REALM" "$DATASTEWARD_ROLE_ID"
+./functions/enable-permissions-for-role.sh "$REALM" "$SPARQLUSER_ROLE_ID"
 
-# Update permission, as adding a new one does not work as expected
-echo "Updating permissions coordinator role ..."
-./functions/update-permission.sh "$REALM" "manage.membership.permission.group.$USERS_GROUP_ID" "workspace-coordinator"
-./functions/update-permission.sh "$REALM" "manage.membership.permission.group.$DATASTEWARDS_GROUP_ID" "workspace-coordinator"
-./functions/update-permission.sh "$REALM" "manage.membership.permission.group.$SPARQL_GROUP_ID" "workspace-coordinator"
+echo "--- Ensuring the right permissions for users and coordinators ---"
+functions/add-policy-for-permission.sh "$REALM" "view.permission.users" "user-${WORKSPACE_NAME}"
+functions/add-policy-for-permission.sh "$REALM" "map-roles.permission.users" "coordinator-${WORKSPACE_NAME}"
+
+functions/add-policy-for-permission.sh "$REALM" "map-role.permission.$USER_ROLE_ID" "coordinator-${WORKSPACE_NAME}"
+functions/add-policy-for-permission.sh "$REALM" "map-role.permission.$DATASTEWARD_ROLE_ID" "coordinator-${WORKSPACE_NAME}"
+functions/add-policy-for-permission.sh "$REALM" "map-role.permission.$SPARQLUSER_ROLE_ID" "coordinator-${WORKSPACE_NAME}"
+
+./functions/add-composite-role.sh "$REALM" "$COORDINATOR_ROLE_ID" "realm-management" "query-clients"
+./functions/add-composite-role.sh "$REALM" "$COORDINATOR_ROLE_ID" "realm-management" "view-realm"
+
 echo "Allowed coordinators to manage members of users and datastewards group"
 
 echo "--- Configuring clients ---"
