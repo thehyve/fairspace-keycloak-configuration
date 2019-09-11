@@ -76,6 +76,7 @@ echo "Adding role for organisation admin ..."
 ORGANISATION_ADMIN_ID=$(./functions/get-user-id.sh "$REALM" "$ORGANISATION_ADMIN_USERNAME")
 ORGANISATION_ADMIN_ROLE_ID=$(./functions/get-role-id.sh "$REALM" "organisation-admin")
 ./functions/add-role-to-user.sh "$REALM" "$ORGANISATION_ADMIN_ID" "$ORGANISATION_ADMIN_ROLE_ID" "organisation-admin"
+./functions/add-client-role-to-user.sh "$REALM" "$ORGANISATION_ADMIN_ID" "realm-management" "query-clients"
 
 # Create a number of additional testusers
 if [ "$ADDITIONAL_TEST_USERS" == "true" ]; then
