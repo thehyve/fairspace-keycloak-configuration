@@ -76,7 +76,11 @@ functions/add-policy-for-permission.sh "$REALM" "map-role.permission.$SPARQLUSER
 ./functions/add-composite-role.sh "$REALM" "$COORDINATOR_ROLE_ID" "realm-management" "query-clients"
 ./functions/add-composite-role.sh "$REALM" "$COORDINATOR_ROLE_ID" "realm-management" "view-realm"
 
-echo "Allowed coordinators to manage members of users and datastewards group"
+echo "--- Ensure the organisation admin to be able to login to and coordinate the workspace ---"
+ORGANISATION_ADMIN_ID=$(./functions/get-role-id.sh "$REALM" "organisation-admin")
+
+./functions/add-composite-realm-role.sh "$REALM" "$ORGANISATION_ADMIN_ID" "user-${WORKSPACE_NAME}"
+./functions/add-composite-realm-role.sh "$REALM" "$ORGANISATION_ADMIN_ID" "coordinator-${WORKSPACE_NAME}"
 
 echo "--- Configuring clients ---"
 
