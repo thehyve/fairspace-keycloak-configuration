@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# This script removes a role to keycloak
+# This script removes a role from keycloak
 #
 # Required arguments to this script are:
 #   realm:              Realm to store the user in
