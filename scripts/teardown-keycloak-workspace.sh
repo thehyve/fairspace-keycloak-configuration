@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script sets up keycloak for a single workspace
+# This script removes keycloak configuration for a single workspace
 #
 # Required arguments to this script are:
 #   url:          Full url to the keycloak server, including /auth. For example: http://localhost:8080/auth
