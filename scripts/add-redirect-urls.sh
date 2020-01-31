@@ -7,12 +7,12 @@
 #   username:     Username of the administrative user to login
 #   realm:        Name of the realm to perform actions in
 #   client_id:    ID (name) of the client to update
-#   redirect-url-file:   Name of the file that contains the additional redirect urls for the workspace.
+#   redirect-url-file:   Name of the file that contains the additional redirect urls for the fairspace.
 #
 # By default the keycloak user logs in to the master realm. However, the script can also
 # be run by a realm-admin of the realm that must be configured. You can specify the LOGIN_REALM variable
 # to point to the right realm to login. Please note that the user needs the realm-management/realm-admin
-# to configure the workspace.
+# to configure the fairspace.
 #
 # The keycloak password is expected to be set as environment variable KEYCLOAK_PASSWORD
 #

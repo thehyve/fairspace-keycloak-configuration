@@ -14,5 +14,5 @@ GROUP_NAME=$2
 
 sed \
     -e "s/\${GROUP_NAME}/$GROUP_NAME/g" \
-    ${DIR}/../workspace-config/group.json | \
+    ${DIR}/../fairspace-config/group.json | \
     kcadm.sh create groups -r "$REALM" -f -

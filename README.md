@@ -1,7 +1,7 @@
 # Keycloak configuration scripts
 
 This repository contains configuration scripts to configure
-keycloak when installing a new hyperspace of workspace.
+keycloak when installing a new hyperspace of fairspace.
 The scripts are usually executed via helm post-install hooks.
 
 ### Structure of keycloak concepts
@@ -9,28 +9,28 @@ This section describes the mapping of Keycloak concepts to Fairspace concepts.
 
 ### Hyperspace
 Within keycloak, a hyperspace corresponds with a realm. When setting it up, two roles are added:
-* `workspace-coordinator`, that allows one to actually add
+* `fairspace-coordinator`, that allows one to actually add
 users to groups. Please note that a user needs specific permissions on group level
 to actually manage group membership. See the next paragraph.
-* `organisation-admin`, that allows to create new workspaces
+* `organisation-admin`, that allows to create new fairspaces
 
-### Workspace
+### fairspace
 
-A hyperspace can be shared by multiple workspaces. Each workspace has a public
+A hyperspace can be shared by multiple fairspaces. Each fairspace has a public
 and a private OIDC authentication client in Keycloak.
 
-The scripts create three user groups per workspace:
-* _<workspace>-coordinators_: members of this group can manage membership
-  of the `<workspace>-users` and `<workspace>-datastewards` groups using the security admin
-  console. The `workspace-coordinator` and `coordinator-<workspace>` roles are mapped to this
+The scripts create three user groups per fairspace:
+* _<fairspace>-coordinators_: members of this group can manage membership
+  of the `<fairspace>-users` and `<fairspace>-datastewards` groups using the security admin
+  console. The `fairspace-coordinator` and `coordinator-<fairspace>` roles are mapped to this
   group.
 
-* _<workspace>-users_: members of this group can use the workspace. Nonmembers can
-  log in, but will not be able to use the application. The `user-<workspace>` role is mapped
+* _<fairspace>-users_: members of this group can use the fairspace. Nonmembers can
+  log in, but will not be able to use the application. The `user-<fairspace>` role is mapped
   to this group.
 
-* _<workspace>-datastewards_: members of this group can edit the vocabulary. The
-  `datasteward-<workspace>` role is mapped to this group.
+* _<fairspace>-datastewards_: members of this group can edit the vocabulary. The
+  `datasteward-<fairspace>` role is mapped to this group.
 
 
 ## Keycloak admin api
@@ -67,16 +67,16 @@ docker run --rm -it \
   -e "CLIENT_SECRET=ed8722df-d968-4990-869c-88424a83512c" \
   -e "KEYCLOAK_URL=http://172.17.0.1:5100/auth" \
   -e "REALM=test" \
-  -e "WORKSPACE=test" \
+  -e "fairspace=test" \
   -e "URL_FILE=/opt/jboss/redirect-urls" \
   keycloak-config
 ```
 
-That would allow you to run the `setup-keycloak-workspace.sh` script as follows:
+That would allow you to run the `setup-keycloak-fairspace.sh` script as follows:
 
 ```
 ./setup-keycloak-hyperspace.sh $KEYCLOAK_URL $KEYCLOAK_USER $REALM $URL_FILE
-./setup-keycloak-workspace.sh $KEYCLOAK_URL $KEYCLOAK_USER $REALM $WORKSPACE $URL_FILE
+./setup-keycloak-fairspace.sh $KEYCLOAK_URL $KEYCLOAK_USER $REALM $fairspace $URL_FILE
 ```
 
 Please note that the docker -v command requires the absolute path to the scripts

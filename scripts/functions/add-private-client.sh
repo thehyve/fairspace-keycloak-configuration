@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# This script adds a private workspace client to keycloak
+# This script adds a private fairspace client to keycloak
 #
 # Required arguments to this script are:
 #   realm:              Realm to store the user in
@@ -23,7 +23,7 @@ sed \
     -e "s/\${CLIENT_ID}/$CLIENT_ID/g" \
     -e "s/\${CLIENT_SECRET}/$CLIENT_SECRET/g" \
     -e "s#\${QUOTED_REDIRECT_URLS}#$QUOTED_REDIRECT_URLS#g" \
-    ${DIR}/../workspace-config/private-client.json | \
+    ${DIR}/../fairspace-config/private-client.json | \
     kcadm.sh create clients -r "$REALM" -f -
 
 ${DIR}/add-client-mapper.sh "$REALM" "$CLIENT_ID"

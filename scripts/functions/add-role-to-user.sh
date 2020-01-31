@@ -19,5 +19,5 @@ ROLE_NAME=$4
 sed \
     -e "s/\${ROLE_ID}/$ROLE_ID/g" \
     -e "s#\${ROLE_NAME}#$ROLE_NAME#g" \
-    ${DIR}/../workspace-config/role-mapping.json | \
+    ${DIR}/../fairspace-config/role-mapping.json | \
     kcadm.sh create users/$USER_ID/role-mappings/realm -r "$REALM" -f -

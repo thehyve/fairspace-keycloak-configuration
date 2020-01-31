@@ -32,5 +32,5 @@ sed \
     -e "s/\${RESOURCE_ID}/$RESOURCE_ID/g" \
     -e "s/\${SCOPE_ID}/$SCOPE_ID/g" \
     -e "s/\${POLICY_ID}/$POLICY_ID/g" \
-    ${DIR}/../workspace-config/permission.json | \
+    ${DIR}/../fairspace-config/permission.json | \
     kcadm.sh create clients/$REALM_MANAGEMENT_UUID/authz/resource-server/permission/scope -r "$REALM" -f -

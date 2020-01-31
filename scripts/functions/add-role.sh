@@ -17,5 +17,5 @@ ROLE_DESCRIPTION=$3
 sed \
     -e "s/\${ROLE_NAME}/$ROLE_NAME/g" \
     -e "s/\${ROLE_DESCRIPTION}/$ROLE_DESCRIPTION/g" \
-    ${DIR}/../workspace-config/role.json | \
+    ${DIR}/../fairspace-config/role.json | \
     kcadm.sh create roles -r "$REALM" -f -

@@ -15,5 +15,5 @@ CLIENT_ID=$2
 CLIENT_UUID=$(${DIR}/get-client-uuid.sh "$REALM" "$CLIENT_ID")
 if [ $? -ne 0 ]; then exit 1; fi
 
-cat ${DIR}/../workspace-config/authorities-client-mapper.json | \
+cat ${DIR}/../fairspace-config/authorities-client-mapper.json | \
     kcadm.sh create clients/$CLIENT_UUID/protocol-mappers/models -r "$REALM" -f -

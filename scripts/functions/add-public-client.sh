@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# This script adds a public workspace client to keycloak
+# This script adds a public fairspace client to keycloak
 #
 # Required arguments to this script are:
 #   realm:              Realm to store the user in
@@ -21,7 +21,7 @@ QUOTED_REDIRECT_URLS=$($DIR/parse-file-to-json-array.sh $REDIRECT_URL_FILE)
 sed \
     -e "s/\${CLIENT_ID}/$CLIENT_ID/g" \
     -e "s#\${QUOTED_REDIRECT_URLS}#$QUOTED_REDIRECT_URLS#g" \
-    ${DIR}/../workspace-config/public-client.json | \
+    ${DIR}/../fairspace-config/public-client.json | \
     kcadm.sh create clients -r "$REALM" -f -
 
 ${DIR}/add-client-mapper.sh "$REALM" "$CLIENT_ID"

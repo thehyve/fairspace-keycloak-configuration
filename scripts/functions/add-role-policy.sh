@@ -22,5 +22,5 @@ if [ $? -ne 0 ]; then exit 1; fi
 sed \
     -e "s/\${POLICY_NAME}/$POLICY_NAME/g" \
     -e "s/\${ROLE_ID}/$ROLE_ID/g" \
-    ${DIR}/../workspace-config/policy.json | \
+    ${DIR}/../fairspace-config/policy.json | \
     kcadm.sh create clients/$CLIENT_UUID/authz/resource-server/policy/role -r "$REALM" -f -

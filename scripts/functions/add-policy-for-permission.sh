@@ -28,5 +28,5 @@ UPDATED_POLICIES=$(echo $CURRENT_POLICIES | jq "map(.id) + [\"$POLICY_ID\"]" | t
 sed \
     -e "s/\${PERMISSION_NAME}/$PERMISSION_NAME/g" \
     -e "s/\${POLICIES}/$UPDATED_POLICIES/g" \
-    ${DIR}/../workspace-config/update-permission.json | \
+    ${DIR}/../fairspace-config/update-permission.json | \
     kcadm.sh update clients/$REALM_MANAGEMENT_UUID/authz/resource-server/permission/scope/$PERMISSION_ID -r "$REALM" -f -

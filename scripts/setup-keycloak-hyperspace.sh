@@ -6,7 +6,7 @@
 #   url:      Full url to the keycloak server, including /auth. For example: http://localhost:8080/auth
 #   username: Username of the administrative user to login
 #   realm:    Name of the realm to create
-#   redirect-url-file:  Name of the file that contains all the redirect urls for the workspace.
+#   redirect-url-file:  Name of the file that contains all the redirect urls for the fairspace.
 #                       Should at least contain the pluto url, after-logout url and jupyterhub url
 #   additional_users:   If set to true, a number of test users will be added to keycloak for testing
 #                       or demo purposes
@@ -56,7 +56,7 @@ echo "Enabling user management permissions ..."
 
 # Add roles
 echo "Creating role for organisation admins..."
-./functions/add-role.sh "$REALM" "organisation-admin" "User can manage workspaces"
+./functions/add-role.sh "$REALM" "organisation-admin" "User can manage fairspaces"
 
 # Add policies to ensure these roles have certain access rights
 echo "Creating role policy for organisation admins ..."

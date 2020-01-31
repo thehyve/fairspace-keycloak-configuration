@@ -22,7 +22,7 @@ sed \
     -e "s/\${USERNAME}/$USERNAME/g" \
     -e "s/\${FIRSTNAME}/$FIRSTNAME/g" \
     -e "s/\${LASTNAME}/$LASTNAME/g" \
-    ${DIR}/../workspace-config/user.json | \
+    ${DIR}/../fairspace-config/user.json | \
     kcadm.sh create users -r "$REALM" -f -
 
 kcadm.sh set-password -r "$REALM" --username "$USERNAME" --new-password "$PASSWORD"

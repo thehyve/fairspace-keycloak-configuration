@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # This scripts adds some additional test users to keycloak
-# for logging into or coordinating the workspace
+# for logging into or coordinating the fairspace
 #
 # Required arguments to this script are:
 #   realm:              Realm to store the user in
