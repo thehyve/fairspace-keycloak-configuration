@@ -43,7 +43,7 @@ echo "--- Removing roles ---"
 ./functions/delete-role.sh "$REALM" "sparqluser-${WORKSPACE_NAME}"
 
 echo "--- Removing clients ---"
-./functions/delete-client.sh "$REALM" "${WORKSPACE_NAME}-pluto"
+./functions/delete-client.sh "$REALM" "${WORKSPACE_NAME}-private"
 ./functions/delete-client.sh "$REALM" "${WORKSPACE_NAME}-public"
 
 # Send 0 response status as some keycloak scrips may have been executed before

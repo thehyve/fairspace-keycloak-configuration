@@ -7,7 +7,7 @@
 #   username: Username of the administrative user to login
 #   realm:    Name of the realm to create
 #   redirect-url-file:  Name of the file that contains all the redirect urls for the workspace.
-#                       Should at least contain the pluto url, after-logout url and jupyterhub url
+#                       Should at least contain the Fairspace url, after-logout url and jupyterhub url
 #   additional_users:   If set to true, a number of test users will be added to keycloak for testing
 #                       or demo purposes
 #

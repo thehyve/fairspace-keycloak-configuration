@@ -5,8 +5,8 @@
 # Required arguments to this script are:
 #   realm:              Realm to store the user in
 #   client_id:          Client ID for the client to create
-#   pluto-url:          Firstname of the user
-#   after-logout-url:    Lastname of the user
+#   client_secret:      Client secret
+#   redirect_url_file:  Redirect URL file
 #
 # An authenticated session for keycloak is assumed to be present.
 #
