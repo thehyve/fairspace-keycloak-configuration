@@ -8,7 +8,7 @@
 #   realm:        Name of the realm to perform actions in
 #   workspace:    Name of the workspace to create
 #   redirect-url-file:   Name of the file that contains all the redirect urls for the workspace.
-#                        Should at least contain the pluto url, after-logout url and jupyterhub url
+#                        Should at least contain the Fairspace url, after-logout url and jupyterhub url
 #
 # By default the keycloak user logs in to the master realm. However, the script can also
 # be run by a realm-admin of the realm that must be configured. You can specify the LOGIN_REALM variable
@@ -90,7 +90,7 @@ echo "--- Configuring clients ---"
 
 # Setup public and private clients for the current realm
 echo "Configuring private client ..."
-./functions/add-private-client.sh "$REALM" "${WORKSPACE_NAME}-pluto" "$CLIENT_SECRET" "$REDIRECT_URL_FILE"
+./functions/add-private-client.sh "$REALM" "${WORKSPACE_NAME}-private" "$CLIENT_SECRET" "$REDIRECT_URL_FILE"
 echo "Configuring public client ..."
 ./functions/add-public-client.sh "$REALM" "${WORKSPACE_NAME}-public" "$REDIRECT_URL_FILE"
 
