@@ -1,6 +1,0 @@
-{
-  "name":"${PERMISSION_NAME}",
-  "policies":${POLICIES},
-  "decisionStrategy": "AFFIRMATIVE",
-  "logic": "POSITIVE"
-}

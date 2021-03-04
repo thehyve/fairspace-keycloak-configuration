@@ -11,7 +11,7 @@ env:
   global:
   - APPNAME="keycloak-configuration"
   - ORG="fairspace"
-  - RELEASE_BRANCH="master"
+  - RELEASE_BRANCH="release"
   - SNAPSHOT_BRANCH="dev"
   - BUILD_SCRIPTS_REPO="fairspace/build-scripts"
   - DOCKER_USERNAME="fairspace"
