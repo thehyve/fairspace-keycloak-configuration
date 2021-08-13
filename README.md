@@ -1,29 +1,15 @@
 # Keycloak configuration scripts
 
 This repository contains configuration scripts to configure
-keycloak when installing a new hyperspace.
+Keycloak when installing a new Fairspace instance.
 The scripts are usually executed via helm post-install hooks.
-
-### Structure of keycloak concepts
-
-This section describes the mapping of Keycloak concepts to Fairspace concepts.
-
-### Hyperspace
-
-Within keycloak, a hyperspace corresponds with a realm.
-
-### Workspace
-
-A hyperspace can be shared by multiple workspaces. Each workspace should have a public
-and a private OIDC authentication client in Keycloak.
-
 
 ## Keycloak admin api
 
 The configurations scripts make use of the `kcadm.sh` script
-that calls the keycloak admin api from the command line.
+that calls the Keycloak Admin API from the command line.
 This simplifies the usage of the api a bit. More information can be
-found in [the Keycloak admin CLI documentation](https://www.keycloak.org/docs/3.4/server_admin/#the-admin-cli).
+found in [the Keycloak admin CLI documentation](https://www.keycloak.org/docs/12.0/server_admin/index.html#the-admin-cli).
 
 The scripts and their dependencies are packaged in a Docker container.
 
