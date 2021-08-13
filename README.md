@@ -1,48 +1,20 @@
 # Keycloak configuration scripts
 
 This repository contains configuration scripts to configure
-keycloak when installing a new hyperspace of workspace.
+Keycloak when installing a new Fairspace instance.
 The scripts are usually executed via helm post-install hooks.
-
-### Structure of keycloak concepts
-This section describes the mapping of Keycloak concepts to Fairspace concepts.
-
-### Hyperspace
-Within keycloak, a hyperspace corresponds with a realm. When setting it up, two roles are added:
-* `workspace-coordinator`, that allows one to actually add
-users to groups. Please note that a user needs specific permissions on group level
-to actually manage group membership. See the next paragraph.
-* `organisation-admin`, that allows to create new workspaces
-
-### Workspace
-
-A hyperspace can be shared by multiple workspaces. Each workspace has a public
-and a private OIDC authentication client in Keycloak.
-
-The scripts create three user groups per workspace:
-* _<workspace>-coordinators_: members of this group can manage membership
-  of the `<workspace>-users` and `<workspace>-datastewards` groups using the security admin
-  console. The `workspace-coordinator` and `coordinator-<workspace>` roles are mapped to this
-  group.
-
-* _<workspace>-users_: members of this group can use the workspace. Nonmembers can
-  log in, but will not be able to use the application. The `user-<workspace>` role is mapped
-  to this group.
-
-* _<workspace>-datastewards_: members of this group can edit the vocabulary. The
-  `datasteward-<workspace>` role is mapped to this group.
-
 
 ## Keycloak admin api
 
 The configurations scripts make use of the `kcadm.sh` script
-that calls the keycloak admin api from the command line.
+that calls the Keycloak Admin API from the command line.
 This simplifies the usage of the api a bit. More information can be
-found in [the Keycloak admin CLI documentation](https://www.keycloak.org/docs/3.4/server_admin/#the-admin-cli).
+found in [the Keycloak admin CLI documentation](https://www.keycloak.org/docs/12.0/server_admin/index.html#the-admin-cli).
 
 The scripts and their dependencies are packaged in a Docker container.
 
 ## Local testing
+
 You can test the scripts locally by starting the
 docker container and mounting the scripts directory inside.
 
@@ -61,25 +33,27 @@ docker run --rm -it \
   -v <absolute-path-to-url-file>:/opt/jboss/redirect-urls \
   -e "KEYCLOAK_USER=keycloak" \
   -e "KEYCLOAK_PASSWORD=keycloak" \
-  -e "TESTUSER_PASSWORD=welkom01" \
-  -e "COORDINATOR_PASSWORD=verySecret01" \
-  -e "ORGANISATION_ADMIN_PASSWORD=verySecret02" \
-  -e "CLIENT_SECRET=ed8722df-d968-4990-869c-88424a83512c" \
   -e "KEYCLOAK_URL=http://172.17.0.1:5100/auth" \
-  -e "REALM=test" \
-  -e "WORKSPACE=test" \
-  -e "URL_FILE=/opt/jboss/redirect-urls" \
   keycloak-config
 ```
 
-That would allow you to run the `setup-keycloak-workspace.sh` script as follows:
+That would allow you to run the `setup-keycloak-hyperspace.sh` script as follows:
 
 ```
-./setup-keycloak-hyperspace.sh $KEYCLOAK_URL $KEYCLOAK_USER $REALM $URL_FILE
-./setup-keycloak-workspace.sh $KEYCLOAK_URL $KEYCLOAK_USER $REALM $WORKSPACE $URL_FILE
+./setup-keycloak-hyperspace.sh $KEYCLOAK_URL $KEYCLOAK_USER
 ```
 
 Please note that the docker -v command requires the absolute path to the scripts
 directory to work properly.
 
-  
+## License
+
+Copyright (c) 2021 The Hyve B.V.
+
+This program is free software: you can redistribute it and/or modify it under the terms of the Apache 2.0
+License published by the Apache Software Foundation, either version 2.0 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Apache 2.0 License for more details.
+
+You should have received a copy of the Apache 2.0 License along with this program (see [LICENSE](LICENSE)). If not, see https://www.apache.org/licenses/LICENSE-2.0.txt.

@@ -1,9 +1,0 @@
-{
-  "type":"role",
-  "logic":"POSITIVE",
-  "decisionStrategy":"UNANIMOUS",
-  "name":"${POLICY_NAME}",
-  "roles":[
-    {"id":"${ROLE_ID}"}
-  ]
-}
