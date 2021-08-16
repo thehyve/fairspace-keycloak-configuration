@@ -13,7 +13,7 @@ env:
   - ORG="fairspace"
   - RELEASE_BRANCH="release"
   - SNAPSHOT_BRANCH="dev"
-  - BUILD_SCRIPTS_REPO="fairspace/fairspace-build-scripts"
+  - BUILD_SCRIPTS_REPO="thehyve/fairspace-build-scripts"
   - DOCKER_USERNAME="fairspace"
   - DEPLOYMENT_CONFIG_DIR="./config"
   - ACCOUNT_CONFIG_DIR="./config"
